@@ -25,6 +25,8 @@ Simply add environment variable in .env:
 And logs with level WARN and ERROR will show up in the teams channel
 
 ## Setup
+Klon ned prosjektet fra github (git clone repo-url)
+
 Sjekk at du har Node installert (versjon 18 eller nyere)
 
 ```bash
