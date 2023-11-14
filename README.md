@@ -2,6 +2,10 @@
 Script som håndterer import av filer til uregistrerte og strekkode import
 
 ## Strekkode import
+Kjøres med
+`npm run import-strekkode-to-p360`
+Fra rotnivå her
+
 ### Flyt
 - Sjekker BARCODE_INPUT_DIR for filer
 - For hver fil:
