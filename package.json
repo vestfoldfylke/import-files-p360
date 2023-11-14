@@ -1,0 +1,31 @@
+{
+  "name": "import-files-p360",
+  "description": "Script som håndterer import av filer til uregistrerte og strekkode import",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "@vtfk/logger": "^5.0.2",
+    "axios": "^1.6.1",
+    "dotenv": "^16.3.1"
+  },
+  "scripts": {
+    "import-strekkode-to-p360": "node ./scripts/import-barcode-to-p360.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vestfoldfylke/import-files-p360.git"
+  },
+  "keywords": [
+    "nei"
+  ],
+  "author": "jorgtho",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vestfoldfylke/import-files-p360/issues"
+  },
+  "homepage": "https://github.com/vestfoldfylke/import-files-p360#readme"
+}
