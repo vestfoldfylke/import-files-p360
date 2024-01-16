@@ -19,7 +19,7 @@
   const getBarcodeData = (fileName) => {
     const fileNameList = fileName.split('_')
 
-    if (fileNameList.length !== 3) throw new Error('Oh oh, not 3 BARCODEr here')
+    if (fileNameList.length < 3) throw new Error('Oh oh, not 3 BARCODEr here')
 
     const docRecno = fileNameList[0]
     const versionId = fileNameList[1]
