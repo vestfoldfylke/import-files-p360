@@ -36,9 +36,9 @@
     }
   }
 
-  logger('info', [`Checking for files in ${BARCODE.BARCODE_INPUT_DIR}`])
-  const files = getFilesInDirWithMetadata(BARCODE.BARCODE_INPUT_DIR)
-  logger('info', [`${files.length} files ready for handling in ${BARCODE.BARCODE_INPUT_DIR}`])
+  logger('info', [`Checking for files in ${BARCODE.INPUT_DIR}`])
+  const files = getFilesInDirWithMetadata(BARCODE.INPUT_DIR)
+  logger('info', [`${files.length} files ready for handling in ${BARCODE.INPUT_DIR}`])
   
 
   for (const file of files) {
@@ -50,18 +50,20 @@
     } catch (error) {
       // Det er noe galt med dette dok - sender det rett til uregistrerte i stedet bare
       logger('error', [`Oh no, something is wrong with barcode data - ${error.toString()}`])
-      const result = await sendToUnreg({ filename: file.fileNameWithoutExt, msg: 'Dokument feilet ved strekkode-lesing', ext: file.fileExt, origin: '2', filepath: file.filePath })
+      const result = await sendToUnreg({ filename: file.fileNameWithoutExt, note: 'Dokument feilet ved strekkode-lesing', ext: file.fileExt, origin: '2', filepath: file.filePath })
       logger('info', result)
-      moveToDir(file.filePath, BARCODE.BARCODE_IMPORTED_TO_UNREG_DIR)
+      moveToDir(file.filePath, BARCODE.IMPORTED_TO_UNREG_DIR)
     }
     try {
       logger('info', [`sending ${file.filePath} to document in P360 with recno: ${barcodeData.docRecno}`])
       await sendToDocument(barcodeData, file)
-      moveToDir(file.filePath, BARCODE.BARCODE_IMPORTED_DIR)
+      moveToDir(file.filePath, BARCODE.IMPORTED_DIR)
       logger('info', [`Succesfylly added ${file.filePath} to document in P360 with recno: ${barcodeData.docRecno}`])
     } catch (error) {
       logger('error', [`Oh no, something went wrong when sending ${file.filePath} to P360 document with recno: ${barcodeData.docRecno} - ${error.toString()}`])
     }
   }
+
+  // Delete imported after days
 
 })()
