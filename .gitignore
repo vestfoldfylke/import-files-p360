@@ -134,3 +134,9 @@ testdata/
 
 #logs
 logs/
+
+# Local data
+local-data/
+
+# Local cache files
+.token-cache/
