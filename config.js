@@ -2,6 +2,8 @@ require('dotenv').config()
 
 module.exports = {
   COUNTY_NUMBER: process.env.COUNTY_NUMBER,
+  TEST_TITLES_INPUT_DIR: process.env.TEST_TITLES_INPUT_DIR || './tests/local-data/test-titles',
+  TEST_TITLES_OUTPUT_DIR: process.env.TEST_TITLES_OUTPUT_DIR || './tests/local-data/test-titles/result',
   BARCODE: {
     INPUT_DIR: process.env.BARCODE_INPUT_DIR,
     IMPORTED_DIR: process.env.BARCODE_IMPORTED_DIR,
@@ -24,6 +26,9 @@ module.exports = {
   ARCHIVE: {
     URL: process.env.ARCHIVE_URL,
     SCOPE: process.env.ARCHIVE_SCOPE
+  },
+  VITNEMAL: {
+    INPUT_DIR: process.env.VITNEMAL_INPUT_DIR
   },
   P360: {
     URL: process.env.P360_URL || 'fjdsoijfidsf.vtfk.no',
