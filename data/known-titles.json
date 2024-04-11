@@ -32,6 +32,10 @@
     "title": "Arbeidsavtale - midlertidig ansettelse"
   },
   {
+    "matchTextLine": "Arbeidsavtale for timelønnet midlertidig ansettelse",
+    "title": "Arbeidsavtale for timelønnet midlertidig ansettelse"
+  },
+  {
     "matchTextLine": "Attest - elevrådsstyre-representant",
     "title": "Attest - elevrådsstyre-representant"
   },
@@ -736,12 +740,20 @@
     "title": "Legeattest"
   },
   {
+    "matchTextLine": "Legeattest - skolefravær",
+    "title": "Legeattest - skolefravær"
+  },
+  {
     "matchTextLine": "Legeattest helseerklæring",
     "title": "Legeattest helseerklæring"
   },
   {
     "matchTextLine": "Legeerklæring - skoleskyss",
     "title": "Legeerklæring - skoleskyss"
+  },
+  {
+    "matchTextLine": "Legeerklæring",
+    "title": "Legeerklæring"
   },
   {
     "matchTextLine": "Legetime - Nome",
@@ -984,6 +996,10 @@
     "title": "Plan for oppfølging av elev med stryk IV"
   },
   {
+    "matchTextLine": "Plan for oppfølging av elev med ikke vurdert IV eller karakteren 1",
+    "title": "Plan for oppfølging av elev med ikke vurdert IV eller karakteren 1"
+  },
+  {
     "matchTextLine": "PPT - Melding om mottatt henvisning - elev",
     "title": "PPT - Melding om mottatt henvisning - elev"
   },
@@ -1120,20 +1136,20 @@
     "title": "Salgskvittering (ukjent)"
   },
   {
-    "matchTextLine": "Samarbeidsavtale mellom OT og NAV",
-    "title": "Samarbeidsavtale mellom OT og NAV"
+    "matchTextLine": "Samarbeidsavtale mellom",
+    "title": "Samarbeidsavtale"
   },
   {
-    "matchTextLine": "Samarbeidsavtale mellom tannhelse og kommune",
-    "title": "Samarbeidsavtale mellom tannhelse og kommune"
+    "matchTextLine": "Individuelle målsetninger",
+    "title": "Individuelle målsetninger"
   },
   {
     "matchTextLine": "Samarbeidsmøte (OT) - elev",
     "title": "Samarbeidsmøte (OT) - elev"
   },
   {
-    "matchTextLine": "Sammtykkeerklæring - innsyn i elevens skolejournal",
-    "title": "Sammtykkeerklæring - innsyn i elevens skolejournal"
+    "matchTextLine": "Samtykkeerklæring - innsyn i elevens skolejournal",
+    "title": "Samtykkeerklæring - innsyn i elevens skolejournal"
   },
   {
     "matchTextLine": "Samtale med rådgiver - elev",
@@ -1346,6 +1362,10 @@
   {
     "matchTextLine": "Søknad om fritak for fag - elev",
     "title": "Søknad om fritak for fag - elev"
+  },
+  {
+    "matchTextLine": "Søknad om fri fra opplæringen permisjon",
+    "title": "Søknad om fri fra opplæringen permisjon"
   },
   {
     "matchTextLine": "Søknad om fritak fra undervisning ifm deltakelse på arrangement",
