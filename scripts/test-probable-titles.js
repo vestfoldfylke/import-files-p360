@@ -88,9 +88,9 @@
 
     const probableTitle = getProbableTitle(pdfData.pages[0].textLines, knownTitles)
     const textElements = getTextElements(pdfData.pages[0].textLines)
-    const firstLines = textElements.textLines.slice(0, 20).map(line => line.replace(/[^a-zA-Z0-9æøåÆØÅ.\- ]/gi, '').replace('  ', ' ')).filter(line => line.length > 3 && /\S/.test(line)).map(line => line.trim()).slice(0, 9)
+    const firstLines = textElements.textLines.map(line => line.replace(/[^a-zA-Z0-9æøåÆØÅ.,\- ]/gi, '').replace('  ', ' ')).filter(line => line.length > 3 && /\S/.test(line)).map(line => line.trim()).slice(0, 50)
     
-    writeFileSync(`${TEST_TITLES_OUTPUT_DIR}/${file.fileNameWithoutExt}.json`, JSON.stringify({ firstLines, probableTitle }, null, 2))
+    writeFileSync(`${TEST_TITLES_OUTPUT_DIR}/${file.fileNameWithoutExt}.json`, JSON.stringify({ probableTitle, firstLines }, null, 2))
 
     probableTitles.push(probableTitle)
 
