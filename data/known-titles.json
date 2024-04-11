@@ -28,8 +28,8 @@
     "title": "Arbeidsavtale for ekstrahjelp - Vestviken Kollektivtrafikk"
   },
   {
-    "matchTextLine": "Arbiedsavtale",
-    "title": "Arbiedsavtale"
+    "matchTextLine": "Arbeidsavtale - midlertidig ansettelse",
+    "title": "Arbeidsavtale - midlertidig ansettelse"
   },
   {
     "matchTextLine": "Attest - elevrådsstyre-representant",
@@ -484,6 +484,10 @@
     "title": "Helseerklæring for skoleskyss i Vestfold"
   },
   {
+    "matchTextLine": "Helseerklæring",
+    "title": "Helseerklæring"
+  },
+  {
     "matchTextLine": "Helseskjema - tannhelse",
     "title": "Helseskjema - tannhelse"
   },
@@ -880,8 +884,8 @@
     "title": "Notat uten oppfølging - karaktermøte - elev"
   },
   {
-    "matchTextLine": "Oppfølgingsplan - elev",
-    "title": "Oppfølgingsplan - elev"
+    "matchTextLine": "Oppfølgingsplan",
+    "title": "Oppfølgingsplan"
   },
   {
     "matchTextLine": "Oppfølgingsplan - sykemelding - personal",
@@ -944,12 +948,12 @@
     "title": "Overføringsmøte - elev"
   },
   {
-    "matchTextLine": "Pedagogisk rapport  - elev",
-    "title": "Pedagogisk rapport  - elev"
+    "matchTextLine": "Pedagogisk rapport",
+    "title": "Pedagogisk rapport - elev"
   },
   {
-    "matchTextLine": "Pedagogisk rapport - elev",
-    "title": "Pedagogisk rapport - elev"
+    "matchTextLine": "Pedagogisk rapport til PP-tjenesten",
+    "title": "Pedagogisk rapport til PP-tjenesten"
   },
   {
     "matchTextLine": "Pedagogisk rapport - søkere uten læreplass",
@@ -1022,6 +1026,10 @@
   {
     "matchTextLine": "Referat fra møte med lærekandidat med vedleggsskjema",
     "title": "Referat fra møte med lærekandidat med vedleggsskjema"
+  },
+  {
+    "matchTextLine": "Referat fra møte med lærekandidat-",
+    "title": "Referat fra møte med lærekandidat- lærlingsøker med vedleggsskjema"
   },
   {
     "matchTextLine": "Referat fra møtet med nye søker til videregående opplæring med behov for tilrettelegging",
@@ -1214,10 +1222,6 @@
   {
     "matchTextLine": "Skolens pedagogiske rapport",
     "title": "Skolens pedagogiske rapport"
-  },
-  {
-    "matchTextLine": "Skolens pedagogiske rapport - PPT",
-    "title": "Skolens pedagogiske rapport - PPT"
   },
   {
     "matchTextLine": "Skolens pedagogiske rapport - vgs",
@@ -1488,6 +1492,10 @@
     "title": "Søknadsskjema - Transportordning TT-kort - samferdsel"
   },
   {
+    "matchTextLine": "Søknadsskjema for TT-ordningen - TT-kort",
+    "title": "Søknadsskjema - Transportordning TT-kort - samferdsel"
+  },
+  {
     "matchTextLine": "Søknadsskjema for omberamming av seriekamp",
     "title": "Søknadsskjema for omberamming av seriekamp"
   },
@@ -1628,6 +1636,10 @@
     "title": "Vitnemål"
   },
   {
+    "matchTextLine": "vitnemålsportalen diploma registry",
+    "title": "Vitnemål (vitnemålsportalen)"
+  },
+  {
     "matchTextLine": "Vitnemål (oversatt)",
     "title": "Vitnemål (oversatt)"
   },
@@ -1650,5 +1662,25 @@
   {
     "matchTextLine": "Vurderingsskjema - tannhelse",
     "title": "Vurderingsskjema - tannhelse"
+  },
+  {
+    "matchTextLine": "Svar på nabovarsel",
+    "title": "Svar på nabovarsel"
+  },
+  {
+    "matchTextLine": "NAV har forlenget perioden med arbeidsavklaringspenger AAP",
+    "title": "NAV har forlenget perioden med arbeidsavklaringspenger AAP"
+  },
+  {
+    "matchTextLine": "NAV har endret svangerskapspengene dine",
+    "title": "NAV har endret svangerskapspengene dine"
+  },
+  {
+    "matchTextLine": "Spesialisterklæring",
+    "title": "Spesialisterklæring"
+  },
+  {
+    "matchTextLine": "Varsel om fare for manglende vurderingsgrunnlag i fag",
+    "title": "Varsel om fare for manglende vurderingsgrunnlag i fag"
   }
 ]
