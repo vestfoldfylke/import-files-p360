@@ -12,6 +12,7 @@
     "@vestfoldfylke/pdf-text-extract": "^1.0.0",
     "@vtfk/logger": "^6.1.0",
     "axios": "^1.6.7",
+    "csvtojson": "^2.0.10",
     "dotenv": "^16.3.1",
     "file-system-cache": "^2.4.4",
     "vtfk-schools-info": "^3.4.1"

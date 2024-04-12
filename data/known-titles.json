@@ -980,6 +980,10 @@
     "title": "Pensjonsmeldingsskjema"
   },
   {
+    "matchTextLine": "VEDTAK OM UNNTAK FRA ARBEIDSGIVERANSVAR FOR SYKEPENGER TIL ARBEIDSTAKER",
+    "title": "Vedtak om unntak fra arbeidsgiveransvar for sykepenger til arbeidstaker"
+  },
+  {
     "matchTextLine": "Personvern og samtykkeerklæring - IMDI og NAV",
     "title": "Personvern og samtykkeerklæring - IMDI og NAV"
   },
@@ -1702,5 +1706,9 @@
   {
     "matchTextLine": "Varsel om fare for manglende vurderingsgrunnlag i fag",
     "title": "Varsel om fare for manglende vurderingsgrunnlag i fag"
+  },
+  {
+    "matchTextLine": "Refusjon skyss utplassering",
+    "title": "Refusjon skyss utplassering"
   }
 ]

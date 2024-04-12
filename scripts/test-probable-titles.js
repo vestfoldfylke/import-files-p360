@@ -12,6 +12,7 @@
   const knownTitles = require('../data/known-titles.json')
   const { getTextElements } = require("../lib/text-tools")
   const { writeFileSync } = require('fs')
+  const csv = require('csvtojson')
 
   /**
    * 
@@ -51,6 +52,9 @@
   knownTitles.sort((a,b) => b.matchTextLine.length - a.matchTextLine.length)
   logger('info', [`Sorted knownTitles by length, longest first`])
 
+  // Get zipcodes
+  const zipcodes = await csv({ delimiter: '\t' }).fromFile('./data/postnummer.txt')
+
   let probableTitles = []
 
   for (const file of files) {
@@ -86,7 +90,7 @@
     }
     if (!pdfData) continue
 
-    const probableTitle = getProbableTitle(pdfData.pages[0].textLines, knownTitles)
+    const probableTitle = getProbableTitle(pdfData.pages[0].textLines, knownTitles, zipcodes)
     const textElements = getTextElements(pdfData.pages[0].textLines)
     const firstLines = textElements.textLines.map(line => line.replace(/[^a-zA-Z0-9æøåÆØÅ.,\- ]/gi, '').replace('  ', ' ')).filter(line => line.length > 3 && /\S/.test(line)).map(line => line.trim()).slice(0, 50)
     
