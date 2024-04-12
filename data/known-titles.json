@@ -432,6 +432,10 @@
     "title": "FSE Kursbevis - elev"
   },
   {
+    "matchTextLine": "Fullføringsplan",
+    "title": "Fullføringsplan"
+  },
+  {
     "matchTextLine": "Fullføringsplan - Elev",
     "title": "Fullføringsplan - Elev"
   },
@@ -1710,5 +1714,73 @@
   {
     "matchTextLine": "Refusjon skyss utplassering",
     "title": "Refusjon skyss utplassering"
+  },
+  {
+    "matchTextLine": "SØKNAD OM Å FRAMSTILLE SEG FOR FAG- OG SVENNEPRØVE UTEN Å HA GJENNOMFØRT",
+    "title": "Søknad om å framstille seg for fag- og svenneprøve"
+  },
+  {
+    "matchTextLine": "Avtale om YFF Yrkesfaglig fordypning før søknadsfrist 1.februar med evaluering",
+    "title": "Avtale om YFF Yrkesfaglig fordypning før søknadsfrist 1.februar med evaluering"
+  },
+  {
+    "matchTextLine": "MELDING TIL FAG- SVENNE- OG KOMPETANSEPRØVE FOR",
+    "title": "Melding til fag- svenne- og kompetanseprøve"
+  },
+  {
+    "matchTextLine": "Dette vedtaket kan påklages av pasienten eller pasientens nærmeste pårørende. Klagefristen er",
+    "title": "Anestesilege og behandlende tannleges vurdering og påtegning ved tannbehandling i narkose"
+  },
+  {
+    "matchTextLine": "Tjenestebevis",
+    "title": "Tjenestebevis"
+  },
+  {
+    "matchTextLine": "Arbeidsavtale - fast stilling",
+    "title": "Arbeidsavtale - fast stilling"
+  },
+  {
+    "matchTextLine": "Avgrenset politiattest",
+    "title": "Avgrenset politiattest"
+  },
+  {
+    "matchTextLine": "Elever med delt bosted kan ha rett til skyss for begge bostedsadresser etter bestemmelser i",
+    "title": "Bekreftelse fra foreldre - skoleskyss ved delt bosted"
+  },
+  {
+    "matchTextLine": "1. SAMTYKKEERKLÆRING FOR PUBLISERING AV BILDER AV OT-UNGDOM",
+    "title": "Samtykkeerklæring for publisering av bilder av OT-ungdom"
+  },
+  {
+    "matchTextLine": "Pliktig vedlegg til søknad om skoleskyss på medisinsk grunnlag i Vestfold",
+    "title": "Helseerklæring for skoleskyss i Vestfold"
+  },
+  {
+    "matchTextLine": "Pliktig vedlegg til søknad om Skoleskyss - på medisinsk grunnlag i Vestfold",
+    "title": "Helseerklæring for skoleskyss i Vestfold"
+  },
+  {
+    "matchTextLine": "SØKNAD OM FRITAK FRA VURDERING MED KARAKTER",
+    "title": "Søknad om fritak fra vurdering med karakter"
+  },
+  {
+    "matchTextLine": "Rektors skjønn ved fraværsgrense på over 10 udokumentert fravær",
+    "title": "Rektors skjønn ved fraværsgrense på over 10 prosent udokumentert fravær"
+  },
+  {
+    "matchTextLine": "Individuelle målsetninger kun denne delen lagres i personalmappen",
+    "title": "Samtaleskjema for utviklings-medarbeidersamtale"
+  },
+  {
+    "matchTextLine": "Søknad om dokumentert fravær fra skolen",
+    "title": "Søknad om dokumentert fravær fra skolen"
+  },
+  {
+    "matchTextLine": "FOR UPPER SECONDARY EDUCATION AND TRAINING",
+    "title": "Vitnemål (oversatt)"
+  },
+  {
+    "matchTextLine": "v i n e m å s p o r t a l e ndiploma registry",
+    "title": "Vitnemål (vitnemålsportalen)"
   }
 ]

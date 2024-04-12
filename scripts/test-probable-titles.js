@@ -56,6 +56,7 @@
   const zipcodes = await csv({ delimiter: '\t' }).fromFile('./data/postnummer.txt')
 
   let probableTitles = []
+  const allFoundTitles = []
 
   for (const file of files) {
     logConfig({
@@ -97,12 +98,17 @@
     writeFileSync(`${TEST_TITLES_OUTPUT_DIR}/${file.fileNameWithoutExt}.json`, JSON.stringify({ probableTitle, firstLines }, null, 2))
 
     probableTitles.push(probableTitle)
-
-    const documentData = { // Hva om vi gjør dette - så kan vi sette litt underveis (f. eks hvis vi "nesten" kunne arkivere automatisk men navn ikke matchet f.eks)
-      title: null,
-      note: null
+    if (probableTitle) {
+      const existingTitle = allFoundTitles.find(title => title.title === probableTitle.title)
+      if (existingTitle) {
+        existingTitle.number++
+      } else {
+        allFoundTitles.push({ title: probableTitle.title, number: 1 })
+      }
     }
   }
-  console.log(probableTitles)
+  allFoundTitles.sort((a,b) => b.number - a.number)
+  
+  writeFileSync(`${TEST_TITLES_OUTPUT_DIR}/_0all-titles.json`, JSON.stringify(allFoundTitles, null, 2))
 
 })()
