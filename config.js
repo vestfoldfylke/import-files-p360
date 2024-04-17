@@ -30,6 +30,9 @@ module.exports = {
   VITNEMAL: {
     INPUT_DIR: process.env.VITNEMAL_INPUT_DIR
   },
+  KOMPETANSEBEVIS: {
+    INPUT_DIR: process.env.KOMPETANSEBEVIS_INPUT_DIR
+  },
   P360: {
     URL: process.env.P360_URL || 'fjdsoijfidsf.vtfk.no',
     AUTHKEY: process.env.P360_AUTHKEY || 'fjdsoijfidsf.vtfk.no',
