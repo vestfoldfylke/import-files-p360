@@ -700,6 +700,10 @@
     "title": "Kompetansebevis"
   },
   {
+    "matchTextLine": "K O M P E T A N S E B E V I S",
+    "title": "Kompetansebevis"
+  },
+  {
     "matchTextLine": "Kompetansebyggeren - Kontrakt opplæring helsefagarbeider",
     "title": "Kompetansebyggeren - Kontrakt opplæring helsefagarbeider"
   },
@@ -1661,6 +1665,14 @@
   },
   {
     "matchTextLine": "Vitnemål",
+    "title": "Vitnemål"
+  },
+  {
+    "matchTextLine": "V I T N E M A L",
+    "title": "Vitnemål"
+  },
+  {
+    "matchTextLine": "V I T N E M Å L",
     "title": "Vitnemål"
   },
   {
