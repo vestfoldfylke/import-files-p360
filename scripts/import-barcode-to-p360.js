@@ -1,9 +1,10 @@
 (async () => {
-  const { getFilesInDirWithMetadata, moveToDir } = require("../lib/file-tools")
-  const { BARCODE } = require("../config")
-  const { sendToUnreg, sendToDocument,  } = require("../lib/archive")
+  const { getFilesInDirWithMetadata, moveToDir } = require('../lib/file-tools')
+  const { BARCODE } = require('../config')
+  const { sendToUnreg, sendToDocument } = require('../lib/archive')
   const { logger, logConfig } = require('@vtfk/logger')
-  const { createLocalLogger } = require("../lib/create-local-logger")
+  const { createLocalLogger } = require('../lib/create-local-logger')
+  const { createStat } = require('../lib/stats')
 
   // Set up logging
   logConfig({
@@ -39,7 +40,6 @@
   logger('info', [`Checking for files in ${BARCODE.INPUT_DIR}`])
   const files = getFilesInDirWithMetadata(BARCODE.INPUT_DIR)
   logger('info', [`${files.length} files ready for handling in ${BARCODE.INPUT_DIR}`])
-  
 
   for (const file of files) {
     let barcodeData = null
@@ -59,11 +59,24 @@
       await sendToDocument(barcodeData, file)
       moveToDir(file.filePath, BARCODE.IMPORTED_DIR)
       logger('info', [`Succesfylly added ${file.filePath} to document in P360 with recno: ${barcodeData.docRecno}`])
+      // Opprett statistikk-element i stats db
+      try {
+        logger('info', ['Creating statistics element'])
+        const stat = {
+          company: 'Ukjent',
+          description: 'Et dokument scannet inn til P360 med strekkode',
+          type: 'Barcode-ScanTo360',
+          documentTitle: 'Strekkode-scanning'
+        }
+        const statRes = await createStat(stat)
+        logger('info', ['Successfully made statistics element', 'Object id', statRes.insertedId])
+      } catch (innerError) {
+        logger('warn', ['Failed when creating stat element', innerError.response?.data || innerError.stack || innerError.toString()])
+      }
     } catch (error) {
       logger('error', [`Oh no, something went wrong when sending ${file.filePath} to P360 document with recno: ${barcodeData.docRecno} - ${error.toString()}`])
     }
   }
 
   // Delete imported after days
-
 })()
