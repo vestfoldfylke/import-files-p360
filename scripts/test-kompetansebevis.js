@@ -1,9 +1,9 @@
 (async () => {
-  const { getFilesInDirWithMetadata, moveToDir } = require("../lib/file-tools")
+  const { getFilesInDirWithMetadata, moveToDir } = require('../lib/file-tools')
   const { logger, logConfig } = require('@vtfk/logger')
-  const { createLocalLogger } = require("../lib/create-local-logger")
-  const { pdfTextExtract } = require("@vestfoldfylke/pdf-text-extract")
-  const { getKompetansebevis } = require("../lib/document-types/kompetansebevis")
+  const { createLocalLogger } = require('../lib/create-local-logger')
+  const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
+  const { getKompetansebevis } = require('../lib/document-types/kompetansebevis')
   const { writeFileSync } = require('fs')
 
   // Set up logging
@@ -20,10 +20,10 @@
   logger('info', [`Checking for files in ${kompetansebevisDir}`])
   const files = getFilesInDirWithMetadata(kompetansebevisDir, 'pdf')
   logger('info', [`${files.length} files ready for handling in ${kompetansebevisDir}`])
-  
+
   for (const file of files) {
     logConfig({
-      prefix: `test-kompetansebevis - ${file.fileName}`,
+      prefix: `test-kompetansebevis - ${file.fileName}`
     })
 
     let pdfData
@@ -54,8 +54,8 @@
           continue
         }
         logger('info', ['Fant itj kompetansebevis her altså... lagrer text for å se pån'])
-        const p1 = file.filePath.substring(0, file.filePath.lastIndexOf('.')) + "-text.json"
-        writeFileSync(p1, JSON.stringify({pdfData, kompetansebevis}, null, 2))
+        const p1 = file.filePath.substring(0, file.filePath.lastIndexOf('.')) + '-text.json'
+        writeFileSync(p1, JSON.stringify({ pdfData, kompetansebevis }, null, 2))
       } catch (error) {
         // fancy error handling
         logger('error', ['Failed when checking for kompetansebevis, will try again next run', error.stack || error.toString()])

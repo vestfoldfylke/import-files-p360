@@ -1,9 +1,9 @@
 (async () => {
-  const { getFilesInDirWithMetadata, moveToDir } = require("../lib/file-tools")
+  const { getFilesInDirWithMetadata, moveToDir } = require('../lib/file-tools')
   const { logger, logConfig } = require('@vtfk/logger')
-  const { createLocalLogger } = require("../lib/create-local-logger")
-  const { pdfTextExtract } = require("@vestfoldfylke/pdf-text-extract")
-  const { getVitnemal } = require("../lib/document-types/vitnemal")
+  const { createLocalLogger } = require('../lib/create-local-logger')
+  const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
+  const { getVitnemal } = require('../lib/document-types/vitnemal')
   const { writeFileSync } = require('fs')
 
   // Set up logging
@@ -20,10 +20,10 @@
   logger('info', [`Checking for files in ${vitnemalDir}`])
   const files = getFilesInDirWithMetadata(vitnemalDir, 'pdf')
   logger('info', [`${files.length} files ready for handling in ${vitnemalDir}`])
-  
+
   for (const file of files) {
     logConfig({
-      prefix: `test-vitnemal - ${file.fileName}`,
+      prefix: `test-vitnemal - ${file.fileName}`
     })
 
     let pdfData
@@ -54,8 +54,8 @@
           continue
         }
         logger('info', ['Fant itj vitnemål her altså... lagrer text for å se pån'])
-        const p1 = file.filePath.substring(0, file.filePath.lastIndexOf('.')) + "-text.json"
-        writeFileSync(p1, JSON.stringify({pdfData, vitnemal}, null, 2))
+        const p1 = file.filePath.substring(0, file.filePath.lastIndexOf('.')) + '-text.json'
+        writeFileSync(p1, JSON.stringify({ pdfData, vitnemal }, null, 2))
       } catch (error) {
         // fancy error handling
         logger('error', ['Failed when checking for vitnemål, will try again next run', error.stack || error.toString()])
