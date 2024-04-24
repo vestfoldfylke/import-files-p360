@@ -19,7 +19,7 @@
   })
 
   logger('info', [`Checking for files in ${KOMPETANSEBEVIS.INPUT_DIR}`])
-  const files = getFilesInDirWithMetadata(KOMPETANSEBEVIS.INPUT_DIR)
+  const files = getFilesInDirWithMetadata(KOMPETANSEBEVIS.INPUT_DIR, 'pdf')
   logger('info', [`${files.length} files ready for handling in ${KOMPETANSEBEVIS.INPUT_DIR}`])
 
   for (const file of files) {

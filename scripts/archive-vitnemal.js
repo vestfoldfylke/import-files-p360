@@ -20,7 +20,7 @@
   })
 
   logger('info', [`Checking for files in ${VITNEMAL.INPUT_DIR}`])
-  const files = getFilesInDirWithMetadata(VITNEMAL.INPUT_DIR)
+  const files = getFilesInDirWithMetadata(VITNEMAL.INPUT_DIR, 'pdf')
   logger('info', [`${files.length} files ready for handling in ${VITNEMAL.INPUT_DIR}`])
 
   for (const file of files) {

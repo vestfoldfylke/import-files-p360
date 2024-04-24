@@ -44,7 +44,7 @@
   const zipcodes = await csv({ delimiter: '\t' }).fromFile('./data/postnummer.txt')
 
   logger('info', [`Checking for files in ${UNREGISTERED.INPUT_DIR}`])
-  const files = getFilesInDirWithMetadata(UNREGISTERED.INPUT_DIR)
+  const files = getFilesInDirWithMetadata(UNREGISTERED.INPUT_DIR, 'pdf')
   logger('info', [`${files.length} files ready for handling in ${UNREGISTERED.INPUT_DIR}`])
 
   for (const file of files) {
