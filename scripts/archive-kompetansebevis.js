@@ -137,6 +137,9 @@
       continue
     }
   }
+  logConfig({
+    prefix: `archive-kompetansebevis`
+  })
   // Delete documents that are old enough from imported
   deleteOldFiles(`${KOMPETANSEBEVIS.INPUT_DIR}/imported`, 30, 'pdf')
 })()

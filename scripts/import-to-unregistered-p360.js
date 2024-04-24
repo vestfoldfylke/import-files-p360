@@ -174,6 +174,9 @@
       moveToDir(file.filePath, UNREGISTERED.FAILED_DIR, `${documentData.title}_${file.fileName}`)
     }
   }
+  logConfig({
+    prefix: `import-to-unregistered-p360`
+  })
   // Delete documents that are old enough - both from imported - and delete the xml-log-files from pixedit in the input-folder
   deleteOldFiles(UNREGISTERED.IMPORTED_DIR, 30, 'pdf')
   deleteOldFiles(UNREGISTERED.UNNECESSARY_XML_DIR, 30, 'xml')
