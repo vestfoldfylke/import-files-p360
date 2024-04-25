@@ -78,7 +78,7 @@
         logger('warn', ['Failed when creating stat element', innerError.response?.data || innerError.stack || innerError.toString()])
       }
     } catch (error) {
-      if (error.response?.data?.message && error.response?.data?.message.includes('does not exist in Document')) {
+      if (error.toString().includes(' does not exist...') || (error.response?.data?.message && error.response?.data?.message.includes('does not exist in Document'))) {
         logger('error', [`Oh no, document with recno ${barcodeData.docRecno} does not exist... moving to failed`, error.response?.data || error.stack || error.toString()])
         moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-failed`)
         continue
