@@ -154,7 +154,7 @@
     try {
       const result = await sendToUnreg({ filename: documentData.title, note: documentData.note, ext: file.fileExt, origin: '2', filepath: file.filePath })
       logger('info', ['Successfully imported to unregistered', result])
-      moveToDir(file.filePath, UNREGISTERED.IMPORTED_DIR, `${documentData.title}_${file.fileName}`)
+      moveToDir(file.filePath, `${UNREGISTERED.INPUT_DIR}/imported`, `${documentData.title}_${file.fileName}`)
       // Opprett statistikk-element i stats db
       try {
         logger('info', ['Creating statistics element'])
@@ -171,7 +171,7 @@
       }
     } catch (error) {
       logger('error', ['Failed when uploading to unregistered (or when moving to imported) - moving to failed folder', error.response?.data || error.stack || error.toString()])
-      moveToDir(file.filePath, UNREGISTERED.FAILED_DIR, `${documentData.title}_${file.fileName}`)
+      moveToDir(file.filePath, `${UNREGISTERED.INPUT_DIR}/failed`, `${documentData.title}_${file.fileName}`)
     }
   }
   logConfig({
