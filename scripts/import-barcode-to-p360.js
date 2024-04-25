@@ -41,7 +41,7 @@
   }
 
   logger('info', [`Checking for files in ${BARCODE.INPUT_DIR}`])
-  const files = getFilesInDirWithMetadata(BARCODE.INPUT_DIR)
+  const files = getFilesInDirWithMetadata(BARCODE.INPUT_DIR, 'pdf')
   logger('info', [`${files.length} files ready for handling in ${BARCODE.INPUT_DIR}`])
 
   for (const file of files) {
