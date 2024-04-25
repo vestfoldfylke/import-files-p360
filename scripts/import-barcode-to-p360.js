@@ -52,11 +52,16 @@
       logger('info', [`Got barcodedata for file ${file.filePath}, nice nice`])
     } catch (error) {
       // Det er noe galt med dette dok - sender det rett til uregistrerte i stedet bare
-      logger('error', [`Oh no, something is wrong with barcode data - ${error.toString()}`])
-      const result = await sendToUnreg({ filename: file.fileNameWithoutExt, note: 'Dokument feilet ved strekkode-lesing', ext: file.fileExt, origin: '2', filepath: file.filePath })
-      logger('info', result)
-      moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-imported-to-unregistered`)
-      continue // Skip to next file
+      logger('error', [`Oh no, something is wrong with barcode data - ${error.toString()}, sending to unregistered instead`])
+      try {
+        const result = await sendToUnreg({ filename: file.fileNameWithoutExt, note: 'Dokument feilet ved strekkode-lesing', ext: file.fileExt, origin: '2', filepath: file.filePath })
+        logger('info', ['Failed barcode sent to unregistered', result])
+        moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-imported-to-unregistered`)
+        continue // Skip to next file
+      } catch (innerError) {
+        logger('error', ['Aiuau, failed when sending failed barcode to unregistered, will try again next run', innerError.response?.data || innerError.stack || innerError.toString()])
+        continue // Skip to next file
+      }
     }
     try {
       logger('info', [`sending ${file.filePath} to document in P360 with recno: ${barcodeData.docRecno}`])
