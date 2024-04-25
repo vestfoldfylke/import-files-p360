@@ -178,6 +178,6 @@
     prefix: 'import-to-unregistered-p360'
   })
   // Delete documents that are old enough - both from imported - and delete the xml-log-files from pixedit in the input-folder
-  deleteOldFiles(UNREGISTERED.IMPORTED_DIR, 30, 'pdf')
+  deleteOldFiles(`${UNREGISTERED.INPUT_DIR}/imported`, 30, 'pdf')
   deleteOldFiles(UNREGISTERED.UNNECESSARY_XML_DIR, 30, 'xml')
 })()
