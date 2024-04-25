@@ -1,5 +1,5 @@
 (async () => {
-  const { getFilesInDirWithMetadata, moveToDir } = require('../lib/file-tools')
+  const { getFilesInDirWithMetadata, moveToDir, deleteOldFiles } = require('../lib/file-tools')
   const { BARCODE } = require('../config')
   const { sendToUnreg, sendToDocument } = require('../lib/archive')
   const { logger, logConfig } = require('@vtfk/logger')
@@ -27,8 +27,11 @@
     const docType = fileNameList[2]
 
     if (!isNumber(docRecno)) throw new Error('Ohoh, first element is not a number / recno')
-    if (!isNumber(versionId)) throw new Error('Ohoh, secobd element is not a number / recno')
+    if (!isNumber(versionId)) throw new Error('Ohoh, second element is not a number / recno')
     if (!['HOVED', 'VEDLEGG'].includes(docType)) throw new Error('Ohoh, docType is not VEDLEGG or HOVED')
+
+    // Sjekk om docRecno er 0 - da er det no kluss
+    if (Number(docRecno) === 0) throw new Error('Ohoh, recno is 0 - that will not work...')
 
     return {
       docRecno,
@@ -52,12 +55,13 @@
       logger('error', [`Oh no, something is wrong with barcode data - ${error.toString()}`])
       const result = await sendToUnreg({ filename: file.fileNameWithoutExt, note: 'Dokument feilet ved strekkode-lesing', ext: file.fileExt, origin: '2', filepath: file.filePath })
       logger('info', result)
-      moveToDir(file.filePath, BARCODE.IMPORTED_TO_UNREG_DIR)
+      moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-imported-to-unregistered`)
+      continue // Skip to next file
     }
     try {
       logger('info', [`sending ${file.filePath} to document in P360 with recno: ${barcodeData.docRecno}`])
       await sendToDocument(barcodeData, file)
-      moveToDir(file.filePath, BARCODE.IMPORTED_DIR)
+      moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-imported`)
       logger('info', [`Succesfylly added ${file.filePath} to document in P360 with recno: ${barcodeData.docRecno}`])
       // Opprett statistikk-element i stats db
       try {
@@ -74,9 +78,15 @@
         logger('warn', ['Failed when creating stat element', innerError.response?.data || innerError.stack || innerError.toString()])
       }
     } catch (error) {
-      logger('error', [`Oh no, something went wrong when sending ${file.filePath} to P360 document with recno: ${barcodeData.docRecno} - ${error.toString()}`])
+      if (error.response?.data?.message && error.response?.data?.message.includes('does not exist in Document')) {
+        logger('error', [`Oh no, document with recno ${barcodeData.docRecno} does not exist... moving to failed`, error.response?.data || error.stack || error.toString()])
+        moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-failed`)
+        continue
+      }
+      logger('error', [`Oh no, something went wrong when sending ${file.filePath} to P360 document with recno: ${barcodeData.docRecno}, will try again next run`, error.response?.data || error.stack || error.toString()])
     }
   }
 
   // Delete imported after days
+  deleteOldFiles(`${BARCODE.INPUT_DIR}/barcode-imported`, 30, 'pdf')
 })()
