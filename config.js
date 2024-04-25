@@ -5,15 +5,13 @@ module.exports = {
   TEST_TITLES_INPUT_DIR: process.env.TEST_TITLES_INPUT_DIR || './tests/local-data/test-titles',
   TEST_TITLES_OUTPUT_DIR: process.env.TEST_TITLES_OUTPUT_DIR || './tests/local-data/test-titles/result',
   BARCODE: {
-    INPUT_DIR: process.env.BARCODE_INPUT_DIR,
-    DELETE_IMPORTED_AFTER_DAYS: process.env.BARCODE_DELETE_IMPORTED_AFTER_DAYS || 30
+    INPUT_DIR: process.env.BARCODE_INPUT_DIR
   },
   UNREGISTERED: {
     INPUT_DIR: process.env.UNREGISTERED_INPUT_DIR,
     UNNECESSARY_XML_DIR: process.env.UNREGISTERED_UNNECESSARY_XML_DIR,
     GET_AD_USER: (process.env.UNREGISTERED_GET_AD_USER && process.env.UNREGISTERED_GET_AD_USER === 'true') || false,
-    AD_MAIN_COUNTY_OU: process.env.UNREGISTERED_AD_MAIN_COUNTY_OU,
-    DELETE_IMPORTED_AFTER_DAYS: process.env.UNREGISTERED_DELETE_IMPORTED_AFTER_DAYS || 30
+    AD_MAIN_COUNTY_OU: process.env.UNREGISTERED_AD_MAIN_COUNTY_OU
   },
   APPREG: {
     CLIENT_ID: process.env.APPREG_CLIENT_ID,
