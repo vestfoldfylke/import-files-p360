@@ -3,7 +3,7 @@ Script som håndterer import av scannede filer til p360
 
 ## PIXEDIT-flyt (Fra scannerne)
 **Hvordan flyter dokumenter fra scanner til ulike script og mapper**
-- Filer kommer fra Canon til Autostore og deretter til pixedit-server - i mappen C:\ScanTo360\uniFLOWinput med filnavn - {navn på person som skannet}_{timestamp for skanning}.pdf + thilhørende json-fil
+- Filer kommer fra Canon til Autostore og deretter til pixedit-server - i mappen `C:\ScanTo360\uniFLOWinput` med filnavn - {navn på person som skannet}_{timestamp for skanning}.pdf + thilhørende json-fil
 - Scriptet til Nils leser json og renamer filen til Canon_{epost til person som skannet}__{navn på som person som skannet}_{timestamp}.pdf - legger i mappen C:\ScanTo360\Input
 - Pixedit lytter på C:\ScanTo360\Input
   - Kjører OCR og litt annet (deskewing og sånt - sjekk Pixedit-profilen)
@@ -18,7 +18,7 @@ Script som håndterer import av scannede filer til p360
 
 ## Strekkode import (import-barcode-to-p360)
 Kjøres med
-`npm run import-strekkode-to-p360`
+`node ./scripts/import-barcode-to-p360.js`
 Fra rotnivå her
 
 ### Flyt
@@ -32,7 +32,7 @@ Fra rotnivå her
 
 ## Uregistrerte import (import-to-unregistered-p360)
 Kjøres med
-`npm run import-to-unregistered-p360`
+`node ./scripts/import-to-unregistered-p360.js`
 Fra rotnivå her
 
 ### Flyt
@@ -52,7 +52,7 @@ Fra rotnivå her
 
 ## Vitnemål-arkivering (archive-vitnemal)
 Kjøres med
-`npm run archive-vitnemal`
+`node ./scripts/archive-vitnemal.js`
 Fra rotnivå her
 
 ### Flyt
@@ -65,7 +65,7 @@ Fra rotnivå her
 
 ## Kompetansebevis-arkivering (archive-kompetansebevis)
 Kjøres med
-`npm run archive-kompetansebevis`
+`node ./scripts/archive-kompetansebevis.js`
 Fra rotnivå her
 
 ### Flyt
@@ -78,7 +78,6 @@ Fra rotnivå her
 
 ## Logger
 Logger finner du i logs mappen etter at script er kjørt
-
 
 ## Teams alert on warn and error
 Sleng inn miljovariabel i .env:
@@ -97,11 +96,7 @@ npm i
 Opprett en .env fil med følgende verdier:
 ```bash
 BARCODE_INPUT_DIR="sti til der scriptet henter filer for strekkode import"
-BARCODE_IMPORTED_DIR="sti til der scriptet legger ferdige filer etter strekkode import"
-BARCODE_IMPORTED_TO_UNREG_DIR="sti til der scriptet legger ferdige filer etter strekkode import som havnet i uregistrete"
 UNREGISTERED_INPUT_DIR="sti til input filer for uregistrerte"
-UNREGISTERED_IMPORTED_DIR="sti til der importerte til uregistrerte legges"
-UNREGISTERED_FAILED_DIR="stil til der feilede importer til uregistrerte legges"
 UNREGISTERED_UNNECESSARY_XML_DIR="sti til der xml-filer skal jevnlig slettes"
 UNREGISTERED_AD_MAIN_COUNTY_OU="navn på OU som vi skal lete etter ad-bruker først"
 UNREGISTERED_GET_AD_USER="true/false" # Om man skal kjøre get-aduser
