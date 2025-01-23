@@ -1,6 +1,9 @@
 # import-files-p360
 Script som håndterer import av scannede filer til p360
 
+## OBS!
+Krever minimum Nodejs v.20.18.1
+
 ## PIXEDIT-flyt (Fra scannerne)
 **Hvordan flyter dokumenter fra scanner til ulike script og mapper**
 - Filer kommer fra Canon til Autostore og deretter til pixedit-server - i mappen `C:\ScanTo360\uniFLOWinput` med filnavn - {navn på person som skannet}_{timestamp for skanning}.pdf + thilhørende json-fil
