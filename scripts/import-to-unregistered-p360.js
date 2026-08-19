@@ -7,7 +7,7 @@
   const { getUnregAdUser } = require('../lib/get-ad-user')
   const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
   const knownTitles = require('../data/known-titles.json')
-  const csv = require('csvtojson')
+  const zipCodes = require('../data/postnummer.json')
   const { getVitnemal } = require('../lib/document-types/vitnemal')
   const { getKompetansebevis } = require('../lib/document-types/kompetansebevis')
   const { getProbableTitle } = require('../lib/title-check')
@@ -40,8 +40,6 @@
   // Get required data for finding probable title
   knownTitles.sort((a, b) => b.matchTextLine.length - a.matchTextLine.length)
   logger('info', ['Sorted knownTitles by length, longest first - for use in titleCheck'])
-
-  const zipcodes = await csv({ delimiter: '\t' }).fromFile('./data/postnummer.txt')
 
   logger('info', [`Checking for files in ${UNREGISTERED.INPUT_DIR}`])
   const files = getFilesInDirWithMetadata(UNREGISTERED.INPUT_DIR, 'pdf')

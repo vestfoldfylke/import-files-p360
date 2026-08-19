@@ -6,9 +6,9 @@
   const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
   const { getProbableTitle } = require('../lib/title-check')
   const knownTitles = require('../data/known-titles.json')
+  const zipcodes = require('../data/postnummer.json')
   const { getTextElements } = require('../lib/text-tools')
   const { writeFileSync } = require('fs')
-  const csv = require('csvtojson')
 
   // Set up logging
   logConfig({
@@ -25,9 +25,6 @@
   logger('info', [`Checking for files in ${TEST_TITLES_INPUT_DIR}`])
   const files = getFilesInDirWithMetadata(TEST_TITLES_INPUT_DIR)
   logger('info', [`${files.length} files ready for handling in ${TEST_TITLES_INPUT_DIR}`])
-
-  // Get zipcodes
-  const zipcodes = await csv({ delimiter: '\t' }).fromFile('./data/postnummer.txt')
 
   const probableTitles = []
   const allFoundTitles = []
