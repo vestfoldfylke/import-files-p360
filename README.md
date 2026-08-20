@@ -21,8 +21,8 @@ Krever minimum Nodejs v.20.18.1
 
 ## Strekkode import (import-barcode-to-p360)
 Kjøres med
-`node ./scripts/import-barcode-to-p360.js`
-Fra rotnivå her
+`npm run import-strekkode-til-p360`
+Fra rotnivå her (npm-scriptet laster `.env` og skriver logg til `logs/` automatisk)
 
 ### Flyt
 - Sjekker BARCODE_INPUT_DIR for filer
@@ -35,8 +35,8 @@ Fra rotnivå her
 
 ## Uregistrerte import (import-to-unregistered-p360)
 Kjøres med
-`node ./scripts/import-to-unregistered-p360.js`
-Fra rotnivå her
+`npm run import-til-uregistrerte-p360`
+Fra rotnivå her (npm-scriptet laster `.env` og skriver logg til `logs/` automatisk)
 
 ### Flyt
 - Sjekker UNREGISTERED_INPUT_DIR for filer
@@ -55,8 +55,8 @@ Fra rotnivå her
 
 ## Vitnemål-arkivering (archive-vitnemal)
 Kjøres med
-`node ./scripts/archive-vitnemal.js`
-Fra rotnivå her
+`npm run arkiver-vitnemal`
+Fra rotnivå her (npm-scriptet laster `.env` og skriver logg til `logs/` automatisk)
 
 ### Flyt
 - Sjekker VITNEMAL_INPUT_DIR for filer
@@ -68,8 +68,8 @@ Fra rotnivå her
 
 ## Kompetansebevis-arkivering (archive-kompetansebevis)
 Kjøres med
-`node ./scripts/archive-kompetansebevis.js`
-Fra rotnivå her
+`npm run arkiver-kompetansebevis`
+Fra rotnivå her (npm-scriptet laster `.env` og skriver logg til `logs/` automatisk)
 
 ### Flyt
 - Sjekker KOMPETANSEBEVIS_INPUT_DIR for filer
@@ -90,7 +90,7 @@ Da får du pling i teams ved loglevel WARN og høyere
 ## Setup
 Klon ned prosjektet fra github (git clone repo-url)
 
-Sjekk at du har Node installert (versjon 18 eller nyere)
+Sjekk at du har Node installert (versjon 20.18.1 eller nyere)
 
 ```bash
 npm i
