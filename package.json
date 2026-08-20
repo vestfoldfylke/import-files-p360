@@ -2,7 +2,9 @@
   "name": "import-files-p360",
   "description": "Script som håndterer import av filer til uregistrerte og strekkode import",
   "version": "1.0.0",
-  "main": "index.js",
+  "engines": {
+    "node": ">=20.18.1"
+  },
   "dependencies": {
     "@azure/msal-node": "^5.5.0",
     "@navikt/fnrvalidator": "^1.3.0",
@@ -25,9 +27,6 @@
     "type": "git",
     "url": "git+https://github.com/vestfoldfylke/import-files-p360.git"
   },
-  "keywords": [
-    "nei"
-  ],
   "author": "jorgtho",
   "license": "MIT",
   "bugs": {
