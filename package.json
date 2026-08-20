@@ -17,6 +17,7 @@
     "arkiver-vitnemal": "node ./lib/run-script.js ./scripts/archive-vitnemal.js",
     "import-strekkode-til-p360": "node ./lib/run-script.js ./scripts/import-barcode-to-p360.js",
     "import-til-uregistrerte-p360": "node ./lib/run-script.js ./scripts/import-to-unregistered-p360.js",
+    "manuell-test-get-ad-user": "node ./lib/run-script.js ./scripts/test-get-ad-user.js",
     "manuell-test-kompetansebevis": "node ./lib/run-script.js ./scripts/test-kompetansebevis.js",
     "manuell-test-logging": "node ./lib/run-script.js ./scripts/test-logging.js",
     "manuell-test-sannsynlige-titler": "node ./lib/run-script.js ./scripts/test-probable-titles.js",
