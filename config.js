@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 module.exports = {
   COUNTY_NUMBER: process.env.COUNTY_NUMBER,
   TEST_TITLES_INPUT_DIR: process.env.TEST_TITLES_INPUT_DIR || './tests/local-data/test-titles',
