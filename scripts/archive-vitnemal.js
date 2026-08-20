@@ -7,6 +7,7 @@
   const { getVitnemal } = require('../lib/document-types/vitnemal')
   const { readFileSync } = require('fs')
   const { createStat } = require('../lib/stats')
+  const { formatError } = require('../lib/error-tools')
 
   logger.logConfig({ prefix: 'archive-vitnemal' })
 
@@ -21,7 +22,7 @@
     try {
       pdfData = await pdfTextExtract({ url: file.filePath, verbosity: 0 })
     } catch (error) {
-      logger.warn('Failed when reading pdf-text, will wait until next run: {ErrorMessage}', error.stack || error.toString())
+      logger.warn('Failed when reading pdf-text, will wait until next run: {ErrorMessage}', formatError(error))
       continue
     }
 
@@ -120,7 +121,7 @@
         const statRes = await createStat(stat)
         logger.info('Successfully made statistics element - Object id: {InsertedId}', statRes.insertedId)
       } catch (innerError) {
-        logger.warn('Failed when creating stat element: {ErrorMessage}', innerError.response?.data || innerError.stack || innerError.toString())
+        logger.warn('Failed when creating stat element: {ErrorMessage}', formatError(innerError))
       }
     } catch (error) {
       logger.errorException(error, 'Failed when archiving vitnemal (or when moving to imported - might archive twice) - will try again next run')

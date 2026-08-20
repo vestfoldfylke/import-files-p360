@@ -7,6 +7,7 @@
   const knownTitles = require('../data/known-titles.json')
   const zipcodes = require('../data/postnummer.json')
   const { getTextElements } = require('../lib/text-tools')
+  const { formatError } = require('../lib/error-tools')
   const { writeFileSync } = require('fs')
 
   logger.logConfig({ prefix: 'test-probable-titles' })
@@ -28,7 +29,7 @@
     try {
       pdfData = await pdfTextExtract({ url: file.filePath, verbosity: 0 })
     } catch (error) {
-      logger.warn('Failed when reading pdf-text, will send to unreg without any further data: {ErrorMessage}', error.stack || error.toString())
+      logger.warn('Failed when reading pdf-text, will send to unreg without any further data: {ErrorMessage}', formatError(error))
       pdfData = null
     }
     if (!pdfData) continue

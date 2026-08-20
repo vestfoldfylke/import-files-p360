@@ -11,6 +11,7 @@
   const { getKompetansebevis } = require('../lib/document-types/kompetansebevis')
   const { getProbableTitle } = require('../lib/title-check')
   const { createStat } = require('../lib/stats')
+  const { formatError } = require('../lib/error-tools')
 
   /**
    *
@@ -56,7 +57,7 @@
         adUser = await getUnregAdUser(scannedByEmail)
         if (adUser) documentData.note = createDocumentNote(`${adUser.Company} - ${adUser.DisplayName}`, file)
       } catch (error) {
-        logger.warn('Feilet ved henting av {ScannedByEmail} i AD, setter bare scannedByEmail som note: {ErrorMessage}', scannedByEmail, error.stack || error.toString())
+        logger.warn('Feilet ved henting av {ScannedByEmail} i AD, setter bare scannedByEmail som note: {ErrorMessage}', scannedByEmail, formatError(error))
       }
     }
     // If no adUser or not enabled, set simple note with scannedByEmail
@@ -66,7 +67,7 @@
     try {
       pdfData = await pdfTextExtract({ url: file.filePath, verbosity: 0 })
     } catch (error) {
-      logger.warn('Failed when reading pdf-text, will send to unreg without any further data: {ErrorMessage}', error.stack || error.toString())
+      logger.warn('Failed when reading pdf-text, will send to unreg without any further data: {ErrorMessage}', formatError(error))
       pdfData = null
     }
 
@@ -86,7 +87,7 @@
           try {
             moveToDir(file.filePath, VITNEMAL.INPUT_DIR)
           } catch (error) {
-            logger.warn('Offh, feila ved flytting av vitnemål... prøver igjen ved neste kjøring: {ErrorMessage}', error.stack || error.toString())
+            logger.warn('Offh, feila ved flytting av vitnemål... prøver igjen ved neste kjøring: {ErrorMessage}', formatError(error))
           }
           continue
         }
@@ -111,7 +112,7 @@
           try {
             moveToDir(file.filePath, KOMPETANSEBEVIS.INPUT_DIR)
           } catch (error) {
-            logger.warn('Offh, feila ved flytting av kompetansebevis... prøver igjen ved neste kjøring: {ErrorMessage}', error.stack || error.toString())
+            logger.warn('Offh, feila ved flytting av kompetansebevis... prøver igjen ved neste kjøring: {ErrorMessage}', formatError(error))
           }
           continue
         }
@@ -155,7 +156,7 @@
         const statRes = await createStat(stat)
         logger.info('Successfully made statistics element - Object id: {InsertedId}', statRes.insertedId)
       } catch (innerError) {
-        logger.warn('Failed when creating stat element: {ErrorMessage}', innerError.response?.data || innerError.stack || innerError.toString())
+        logger.warn('Failed when creating stat element: {ErrorMessage}', formatError(innerError))
       }
     } catch (error) {
       logger.errorException(error, 'Failed when uploading to unregistered (or when moving to imported) - moving to failed folder')

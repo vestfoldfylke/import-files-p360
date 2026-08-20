@@ -4,6 +4,7 @@
   const { sendToUnreg, sendToDocument } = require('../lib/archive')
   const { logger } = require('@vestfoldfylke/loglady')
   const { createStat } = require('../lib/stats')
+  const { formatError } = require('../lib/error-tools')
 
   logger.logConfig({ prefix: 'import-barcode-to-p360' })
 
@@ -72,10 +73,11 @@
         const statRes = await createStat(stat)
         logger.info('Successfully made statistics element - Object id: {InsertedId}', statRes.insertedId)
       } catch (innerError) {
-        logger.warn('Failed when creating stat element: {ErrorMessage}', innerError.response?.data || innerError.stack || innerError.toString())
+        logger.warn('Failed when creating stat element: {ErrorMessage}', formatError(innerError))
       }
     } catch (error) {
-      if (error.toString().includes(' does not exist...') || (error.response?.data?.message && error.response?.data?.message.includes('does not exist in Document'))) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      if (errorMessage.includes(' does not exist...') || errorMessage.includes('does not exist in Document')) {
         logger.errorException(error, 'Oh no, document with recno {DocRecno} does not exist... moving to failed', barcodeData.docRecno)
         moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-failed`)
         continue

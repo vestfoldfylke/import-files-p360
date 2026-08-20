@@ -3,6 +3,7 @@
   const { logger } = require('@vestfoldfylke/loglady')
   const { pdfTextExtract } = require('../lib/pdf-text-extract')
   const { getVitnemal } = require('../lib/document-types/vitnemal')
+  const { formatError } = require('../lib/error-tools')
   const { writeFileSync } = require('fs')
 
   logger.logConfig({ prefix: 'test-vitnemal' })
@@ -20,7 +21,7 @@
     try {
       pdfData = await pdfTextExtract({ url: file.filePath, verbosity: 0 })
     } catch (error) {
-      logger.warn('Failed when reading pdf-text: {ErrorMessage}', error.stack || error.toString())
+      logger.warn('Failed when reading pdf-text: {ErrorMessage}', formatError(error))
       pdfData = null // Why just not continue here - am i idiot? yes
     }
     if (!pdfData) continue
@@ -39,7 +40,7 @@
             const p2 = `${vitnemalDir}/success/${file.fileNameWithoutExt}-result.json`
             writeFileSync(p2, JSON.stringify({ vitnemal, pdfData }, null, 2))
           } catch (error) {
-            logger.warn('Offh, feila ved flytting av vitnemål... prøver igjen ved neste kjøring: {ErrorMessage}', error.stack || error.toString())
+            logger.warn('Offh, feila ved flytting av vitnemål... prøver igjen ved neste kjøring: {ErrorMessage}', formatError(error))
           }
           continue
         }
