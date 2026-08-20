@@ -23,7 +23,8 @@
     "manuell-test-sannsynlige-titler": "node ./lib/run-script.js ./scripts/test-probable-titles.js",
     "manuell-test-vitnemal": "node ./lib/run-script.js ./scripts/test-vitnemal.js",
     "test": "node --test \"tests/**/*.test.js\"",
-    "test:verbose": "node --test --test-reporter=spec \"tests/**/*.test.js\""
+    "test:verbose": "node --test --test-reporter=spec \"tests/**/*.test.js\"",
+    "typecheck": "tsc -p jsconfig.json"
   },
   "repository": {
     "type": "git",
@@ -34,5 +35,9 @@
   "bugs": {
     "url": "https://github.com/vestfoldfylke/import-files-p360/issues"
   },
-  "homepage": "https://github.com/vestfoldfylke/import-files-p360#readme"
+  "homepage": "https://github.com/vestfoldfylke/import-files-p360#readme",
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2"
+  }
 }
