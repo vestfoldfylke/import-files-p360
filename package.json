@@ -18,9 +18,15 @@
     "vtfk-schools-info": "^3.4.1"
   },
   "scripts": {
-    "import-strekkode-to-p360": "node ./scripts/import-barcode-to-p360.js",
-    "test": "jest",
-    "test:verbose": "jest --verbose"
+    "arkiver-kompetansebevis": "node ./lib/run-script.js ./scripts/archive-kompetansebevis.js",
+    "arkiver-vitnemal": "node ./lib/run-script.js ./scripts/archive-vitnemal.js",
+    "import-strekkode-til-p360": "node ./lib/run-script.js ./scripts/import-barcode-to-p360.js",
+    "import-til-uregistrerte-p360": "node ./lib/run-script.js ./scripts/import-to-unregistered-p360.js",
+    "manuell-test-kompetansebevis": "node ./lib/run-script.js ./scripts/test-kompetansebevis.js",
+    "manuell-test-sannsynlige-titler": "node ./lib/run-script.js ./scripts/test-probable-titles.js",
+    "manuell-test-vitnemal": "node ./lib/run-script.js ./scripts/test-vitnemal.js",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "test:verbose": "node --test --test-reporter=spec \"tests/**/*.test.js\""
   },
   "repository": {
     "type": "git",
