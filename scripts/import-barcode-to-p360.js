@@ -8,8 +8,34 @@
 
   logger.logConfig({ prefix: 'import-barcode-to-p360' })
 
-  const isNumber = num => { return !isNaN(num) }
+  /**
+   * 
+   * @param {string} string
+   * @returns {boolean}
+   */
+  const isNumbericalString = string => { 
+    // Exclude empty strings or strings with only whitespace
+    if (typeof string !== 'string' || string.trim() === '') return false;
+    
+    // Convert and check if it is a whole number
+    return Number.isInteger(Number(string));
+  }
 
+  /**
+   * 
+   * @param {string} fileName 
+   * @returns {{docRecno: string, versionId: string, docType: string}}
+   * @throws {Error} If the fileName is not in the expected format
+   * @throws {Error} If the docRecno or versionId is not a number
+   * @throws {Error} If the docType is not 'HOVED' or 'VEDLEGG'
+   * @throws {Error} If the docRecno is 0
+   * 
+   * The expected format of the fileName is: "{docRecno}_{versionId}_{docType}"
+   * where:
+   * - docRecno: a number representing the document record number
+   * - versionId: a number representing the version ID of the document
+   * - docType: either 'HOVED' or 'VEDLEGG', indicating the type of document
+   */
   const getBarcodeData = (fileName) => {
     const fileNameList = fileName.split('_')
 
@@ -19,8 +45,8 @@
     const versionId = fileNameList[1]
     const docType = fileNameList[2]
 
-    if (!isNumber(docRecno)) throw new Error('Ohoh, first element is not a number / recno')
-    if (!isNumber(versionId)) throw new Error('Ohoh, second element is not a number / recno')
+    if (!isNumbericalString(docRecno)) throw new Error('Ohoh, first element is not a number / recno')
+    if (!isNumbericalString(versionId)) throw new Error('Ohoh, second element is not a number / recno')
     if (!['HOVED', 'VEDLEGG'].includes(docType)) throw new Error('Ohoh, docType is not VEDLEGG or HOVED')
 
     // Sjekk om docRecno er 0 - da er det no kluss
@@ -32,6 +58,8 @@
       docType
     }
   }
+
+  if (!BARCODE.INPUT_DIR) throw new Error('Oh oh, no BARCODE.INPUT_DIR in config...')
 
   logger.info('Checking for files in {InputDir}', BARCODE.INPUT_DIR)
   const files = getFilesInDirWithMetadata(BARCODE.INPUT_DIR, 'pdf')
