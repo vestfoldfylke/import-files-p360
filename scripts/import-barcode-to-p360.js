@@ -24,7 +24,7 @@
   /**
    * 
    * @param {string} fileName 
-   * @returns {{docRecno: string, versionId: string, docType: string}}
+   * @returns {import('../lib/types').BarcodeData}
    * @throws {Error} If the fileName is not in the expected format
    * @throws {Error} If the docRecno or versionId is not a number
    * @throws {Error} If the docType is not 'HOVED' or 'VEDLEGG'
