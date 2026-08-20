@@ -3,7 +3,7 @@
   const { VITNEMAL } = require('../config')
   const { logger } = require('@vestfoldfylke/loglady')
   const { callArchive } = require('../lib/call-archive')
-  const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
+  const { pdfTextExtract } = require('../lib/pdf-text-extract')
   const { getVitnemal } = require('../lib/document-types/vitnemal')
   const { readFileSync } = require('fs')
   const { createStat } = require('../lib/stats')

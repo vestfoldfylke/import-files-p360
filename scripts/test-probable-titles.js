@@ -2,7 +2,7 @@
   const { getFilesInDirWithMetadata } = require('../lib/file-tools')
   const { TEST_TITLES_INPUT_DIR, TEST_TITLES_OUTPUT_DIR } = require('../config')
   const { logger } = require('@vestfoldfylke/loglady')
-  const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
+  const { pdfTextExtract } = require('../lib/pdf-text-extract')
   const { getProbableTitle } = require('../lib/title-check')
   const knownTitles = require('../data/known-titles.json')
   const zipcodes = require('../data/postnummer.json')

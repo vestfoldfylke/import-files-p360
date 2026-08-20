@@ -4,7 +4,7 @@
   const { sendToUnreg } = require('../lib/archive')
   const { logger } = require('@vestfoldfylke/loglady')
   const { getUnregAdUser } = require('../lib/get-ad-user')
-  const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
+  const { pdfTextExtract } = require('../lib/pdf-text-extract')
   const knownTitles = require('../data/known-titles.json')
   const zipCodes = require('../data/postnummer.json')
   const { getVitnemal } = require('../lib/document-types/vitnemal')

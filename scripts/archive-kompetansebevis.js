@@ -3,7 +3,7 @@
   const { KOMPETANSEBEVIS } = require('../config')
   const { logger } = require('@vestfoldfylke/loglady')
   const { callArchive } = require('../lib/call-archive')
-  const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
+  const { pdfTextExtract } = require('../lib/pdf-text-extract')
   const { getKompetansebevis } = require('../lib/document-types/kompetansebevis')
   const { readFileSync } = require('fs')
   const { createStat } = require('../lib/stats')

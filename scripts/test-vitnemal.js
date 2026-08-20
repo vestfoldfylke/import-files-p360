@@ -1,7 +1,7 @@
 (async () => {
   const { getFilesInDirWithMetadata, moveToDir } = require('../lib/file-tools')
   const { logger } = require('@vestfoldfylke/loglady')
-  const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
+  const { pdfTextExtract } = require('../lib/pdf-text-extract')
   const { getVitnemal } = require('../lib/document-types/vitnemal')
   const { writeFileSync } = require('fs')
 
