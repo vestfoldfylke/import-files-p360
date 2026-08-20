@@ -11,6 +11,10 @@
 
   logger.logConfig({ prefix: 'archive-vitnemal' })
 
+  if (!VITNEMAL.INPUT_DIR) throw new Error('VITNEMAL_INPUT_DIR must be set')
+  if (!VITNEMAL.FALLBACK_ORGANIZATION_NUMBER) throw new Error('VITNEMAL_FALLBACK_ORGANIZATION_NUMBER must be set')
+  if (!VITNEMAL.FALLBACK_ACCESS_GROUP) throw new Error('VITNEMAL_FALLBACK_ACCESS_GROUP must be set')
+
   logger.info('Checking for files in {InputDir}', VITNEMAL.INPUT_DIR)
   const files = getFilesInDirWithMetadata(VITNEMAL.INPUT_DIR, 'pdf')
   logger.info('{FileCount} files ready for handling in {InputDir}', files.length, VITNEMAL.INPUT_DIR)
@@ -33,7 +37,7 @@
       if (vitnemal.waitForNextRun) { // FREG failed with some internal error - let's try again next run instead
         continue // maybe log as well
       }
-      if (!vitnemal.foundType) {
+      if (!vitnemal.foundType || !vitnemal.privatePerson) {
         logger.warn('Har et vitnemål, men har ikke nok data!! Her er det noget kluss....')
         continue
       }

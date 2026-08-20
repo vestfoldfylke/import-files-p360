@@ -11,6 +11,10 @@
 
   logger.logConfig({ prefix: 'archive-kompetansebevis' })
 
+  if (!KOMPETANSEBEVIS.INPUT_DIR) throw new Error('KOMPETANSEBEVIS_INPUT_DIR must be set')
+  if (!KOMPETANSEBEVIS.FALLBACK_ORGANIZATION_NUMBER) throw new Error('KOMPETANSEBEVIS_FALLBACK_ORGANIZATION_NUMBER must be set')
+  if (!KOMPETANSEBEVIS.FALLBACK_ACCESS_GROUP) throw new Error('KOMPETANSEBEVIS_FALLBACK_ACCESS_GROUP must be set')
+
   logger.info('Checking for files in {InputDir}', KOMPETANSEBEVIS.INPUT_DIR)
   const files = getFilesInDirWithMetadata(KOMPETANSEBEVIS.INPUT_DIR, 'pdf')
   logger.info('{FileCount} files ready for handling in {InputDir}', files.length, KOMPETANSEBEVIS.INPUT_DIR)
@@ -33,7 +37,7 @@
       if (kompetansebevis.waitForNextRun) { // FREG failed with some internal error - let's try again next run instead
         continue // maybe log as well
       }
-      if (!kompetansebevis.foundType) {
+      if (!kompetansebevis.foundType || !kompetansebevis.privatePerson) {
         logger.warn('Har et Kompetansebevis, men har ikke nok data!! Her er det noget kluss....')
         continue
       }

@@ -30,6 +30,11 @@
 
   logger.logConfig({ prefix: 'import-to-unregistered-p360' })
 
+  if (!UNREGISTERED.INPUT_DIR) throw new Error('UNREGISTERED_INPUT_DIR must be set')
+  if (!UNREGISTERED.UNNECESSARY_XML_DIR) throw new Error('UNREGISTERED_UNNECESSARY_XML_DIR must be set')
+  if (!VITNEMAL.INPUT_DIR) throw new Error('VITNEMAL_INPUT_DIR must be set')
+  if (!KOMPETANSEBEVIS.INPUT_DIR) throw new Error('KOMPETANSEBEVIS_INPUT_DIR must be set')
+
   // Get required data for finding probable title
   knownTitles.sort((a, b) => b.matchTextLine.length - a.matchTextLine.length)
   logger.info('Sorted knownTitles by length, longest first - for use in titleCheck')
@@ -45,9 +50,10 @@
     const userPart = filenameParts[0]
     const scannedByEmail = userPart.substring(userPart.lastIndexOf('_') + 1) // Skriv om til å hente e-post ut av filnavnet, samma hvordan det ser ut
 
+    /** @type {{ title: string | null, note: string }} */
     const documentData = { // Hva om vi gjør dette - så kan vi sette litt underveis (f. eks hvis vi "nesten" kunne arkivere automatisk men navn ikke matchet f.eks)
       title: null,
-      note: null
+      note: ''
     }
 
     // Get AD-user if enabled in config (disable in local env when no access to get-aduser)
@@ -129,7 +135,7 @@
 
       // If no title yet - check for a known title - use fancy stuff we made
       if (!documentData.title) {
-        const probableTitle = getProbableTitle(pdfData.pages[0].textLines, knownTitles, zipcodes)
+        const probableTitle = getProbableTitle(pdfData.pages[0].textLines, knownTitles, zipCodes)
         if (probableTitle) {
           logger.info('Found probable document title {Title} - type {Type}', probableTitle.title, probableTitle.type)
           documentData.title = probableTitle.title
@@ -140,10 +146,11 @@
       }
     }
 
+    const title = documentData.title ?? 'Ukjent dokumentttype'
     try {
-      const result = await sendToUnreg({ filename: documentData.title, note: documentData.note, ext: file.fileExt, origin: '2', filepath: file.filePath })
+      const result = await sendToUnreg({ filename: title, note: documentData.note, ext: file.fileExt, origin: '2', filepath: file.filePath })
       logger.info('Successfully imported to unregistered - Result: {@Result}', result)
-      moveToDir(file.filePath, `${UNREGISTERED.INPUT_DIR}/imported`, `${documentData.title}_${file.fileName}`)
+      moveToDir(file.filePath, `${UNREGISTERED.INPUT_DIR}/imported`, `${title}_${file.fileName}`)
       // Opprett statistikk-element i stats db
       try {
         logger.info('Creating statistics element')
@@ -151,7 +158,7 @@
           company: adUser?.Company || 'Ukjent',
           description: 'Et dokument scannet inn til P360',
           type: 'ScanTo360',
-          documentTitle: documentData.title
+          documentTitle: title
         }
         const statRes = await createStat(stat)
         logger.info('Successfully made statistics element - Object id: {InsertedId}', statRes.insertedId)
@@ -160,7 +167,7 @@
       }
     } catch (error) {
       logger.errorException(error, 'Failed when uploading to unregistered (or when moving to imported) - moving to failed folder')
-      moveToDir(file.filePath, `${UNREGISTERED.INPUT_DIR}/failed`, `${documentData.title}_${file.fileName}`)
+      moveToDir(file.filePath, `${UNREGISTERED.INPUT_DIR}/failed`, `${title}_${file.fileName}`)
     }
   }
   logger.logConfig({ prefix: 'import-to-unregistered-p360' })

@@ -8,6 +8,10 @@
   logger.logConfig({ prefix: 'test-get-ad-user' })
 
   let failures = 0
+  /**
+   * @param {string} message
+   * @param {...any} params
+   */
   const fail = (message, ...params) => {
     failures++
     logger.error(message, ...params)

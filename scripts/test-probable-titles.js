@@ -20,6 +20,7 @@
   logger.info('{FileCount} files ready for handling in {InputDir}', files.length, TEST_TITLES_INPUT_DIR)
 
   const probableTitles = []
+  /** @type {{ title: string, number: number }[]} */
   const allFoundTitles = []
 
   for (const file of files) {
