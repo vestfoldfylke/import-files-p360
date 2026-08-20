@@ -1,37 +1,27 @@
 (async () => {
   const { getFilesInDirWithMetadata, moveToDir, deleteOldFiles } = require('../lib/file-tools')
   const { KOMPETANSEBEVIS } = require('../config')
-  const { logger, logConfig } = require('@vtfk/logger')
+  const { logger } = require('@vestfoldfylke/loglady')
   const { callArchive } = require('../lib/call-archive')
-  const { createLocalLogger } = require('../lib/create-local-logger')
   const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
   const { getKompetansebevis } = require('../lib/document-types/kompetansebevis')
   const { readFileSync } = require('fs')
   const { createStat } = require('../lib/stats')
 
-  // Set up logging
-  logConfig({
-    prefix: 'archive-kompetansebevis',
-    teams: {
-      onlyInProd: false
-    },
-    localLogger: createLocalLogger('archive-kompetansebevis')
-  })
+  logger.logConfig({ prefix: 'archive-kompetansebevis' })
 
-  logger('info', [`Checking for files in ${KOMPETANSEBEVIS.INPUT_DIR}`])
+  logger.info('Checking for files in {InputDir}', KOMPETANSEBEVIS.INPUT_DIR)
   const files = getFilesInDirWithMetadata(KOMPETANSEBEVIS.INPUT_DIR, 'pdf')
-  logger('info', [`${files.length} files ready for handling in ${KOMPETANSEBEVIS.INPUT_DIR}`])
+  logger.info('{FileCount} files ready for handling in {InputDir}', files.length, KOMPETANSEBEVIS.INPUT_DIR)
 
   for (const file of files) {
-    logConfig({
-      prefix: `archive-kompetansebevis - ${file.fileName}`
-    })
+    logger.logConfig({ prefix: `archive-kompetansebevis - ${file.fileName}` })
 
     let pdfData
     try {
       pdfData = await pdfTextExtract({ url: file.filePath, verbosity: 0 })
     } catch (error) {
-      logger('warn', ['Failed when reading pdf-text, will wait until next run', error.stack || error.toString()])
+      logger.warn('Failed when reading pdf-text, will wait until next run: {ErrorMessage}', error.stack || error.toString())
       continue
     }
 
@@ -43,12 +33,12 @@
         continue // maybe log as well
       }
       if (!kompetansebevis.foundType) {
-        logger('warn', ['Har et Kompetansebevis, men har ikke nok data!! Her er det noget kluss....'])
+        logger.warn('Har et Kompetansebevis, men har ikke nok data!! Her er det noget kluss....')
         continue
       }
     } catch (error) {
       // fancy error handling
-      logger('error', ['Failed when getting data for Kompetansebevis, will try again next run', error.stack || error.toString()])
+      logger.errorException(error, 'Failed when getting data for Kompetansebevis, will try again next run')
       continue
     }
 
@@ -67,9 +57,9 @@
     try {
       const syncElevmappeRes = await callArchive('SyncElevmappe', { ssn: kompetansebevis.privatePerson.ssn })
       elevmappe = syncElevmappeRes.elevmappe
-      logger('info', ['Successfully synced elevmappe', syncElevmappeRes.elevmappe.CaseNumber])
+      logger.info('Successfully synced elevmappe - CaseNumber: {CaseNumber}', syncElevmappeRes.elevmappe.CaseNumber)
     } catch (error) {
-      logger('error', ['Failed when syncing elevmappe - will try again next run', error.response?.data || error.stack || error.toString()])
+      logger.errorException(error, 'Failed when syncing elevmappe - will try again next run')
       continue
     }
 
@@ -116,11 +106,11 @@
     // Archive the Kompetansebevis
     try {
       const result = await callArchive('Archive', kompetansebevisPayload)
-      logger('info', ['Successfully archived kompetansebevis', result])
+      logger.info('Successfully archived kompetansebevis - Result: {@Result}', result)
       moveToDir(file.filePath, `${KOMPETANSEBEVIS.INPUT_DIR}/imported`)
       // Opprett statistikk-element i stats db
       try {
-        logger('info', ['Creating statistics element'])
+        logger.info('Creating statistics element')
         const stat = {
           company: kompetansebevis.school?.name || 'Ukjent',
           description: 'Automatisk arkivert kompetansebevis fra scanner',
@@ -128,18 +118,16 @@
           documentTitle: 'Kompetansebevis'
         }
         const statRes = await createStat(stat)
-        logger('info', ['Successfully made statistics element', 'Object id', statRes.insertedId])
+        logger.info('Successfully made statistics element - Object id: {InsertedId}', statRes.insertedId)
       } catch (innerError) {
-        logger('warn', ['Failed when creating stat element', innerError.response?.data || innerError.stack || innerError.toString()])
+        logger.warn('Failed when creating stat element: {ErrorMessage}', innerError.response?.data || innerError.stack || innerError.toString())
       }
     } catch (error) {
-      logger('error', ['Failed when archiving kompetansebevis (or when moving to imported - might archive twice) - will try again next run', error.response?.data || error.stack || error.toString()])
+      logger.errorException(error, 'Failed when archiving kompetansebevis (or when moving to imported - might archive twice) - will try again next run')
       continue
     }
   }
-  logConfig({
-    prefix: 'archive-kompetansebevis'
-  })
+  logger.logConfig({ prefix: 'archive-kompetansebevis' })
   // Delete documents that are old enough from imported
   deleteOldFiles(`${KOMPETANSEBEVIS.INPUT_DIR}/imported`, 30, 'pdf')
 })()

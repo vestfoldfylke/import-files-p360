@@ -2,8 +2,7 @@
   const { getFilesInDirWithMetadata, moveToDir, deleteOldFiles } = require('../lib/file-tools')
   const { UNREGISTERED, VITNEMAL, KOMPETANSEBEVIS } = require('../config')
   const { sendToUnreg } = require('../lib/archive')
-  const { logger, logConfig } = require('@vtfk/logger')
-  const { createLocalLogger } = require('../lib/create-local-logger')
+  const { logger } = require('@vestfoldfylke/loglady')
   const { getUnregAdUser } = require('../lib/get-ad-user')
   const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
   const knownTitles = require('../data/known-titles.json')
@@ -28,27 +27,18 @@
     return `Scannet av: ${scannedBy} - ${timestamp}`
   }
 
-  // Set up logging
-  logConfig({
-    prefix: 'import-to-unregistered-p360',
-    teams: {
-      onlyInProd: false
-    },
-    localLogger: createLocalLogger('import-to-unregistered-p360')
-  })
+  logger.logConfig({ prefix: 'import-to-unregistered-p360' })
 
   // Get required data for finding probable title
   knownTitles.sort((a, b) => b.matchTextLine.length - a.matchTextLine.length)
-  logger('info', ['Sorted knownTitles by length, longest first - for use in titleCheck'])
+  logger.info('Sorted knownTitles by length, longest first - for use in titleCheck')
 
-  logger('info', [`Checking for files in ${UNREGISTERED.INPUT_DIR}`])
+  logger.info('Checking for files in {InputDir}', UNREGISTERED.INPUT_DIR)
   const files = getFilesInDirWithMetadata(UNREGISTERED.INPUT_DIR, 'pdf')
-  logger('info', [`${files.length} files ready for handling in ${UNREGISTERED.INPUT_DIR}`])
+  logger.info('{FileCount} files ready for handling in {InputDir}', files.length, UNREGISTERED.INPUT_DIR)
 
   for (const file of files) {
-    logConfig({
-      prefix: `import-to-unregistered-p360 - ${file.fileName}`
-    })
+    logger.logConfig({ prefix: `import-to-unregistered-p360 - ${file.fileName}` })
     // Get user that scanned file - files from autostore on the format "_{UserDisplayName}_ _{UserEmail}___{FileID}.pdf"
     const filenameParts = file.fileName.split('__')
     const userPart = filenameParts[0]
@@ -66,7 +56,7 @@
         adUser = await getUnregAdUser(scannedByEmail)
         if (adUser) documentData.note = createDocumentNote(`${adUser.Company} - ${adUser.DisplayName}`, file)
       } catch (error) {
-        logger('warn', [`Feilet ved henting av ${scannedByEmail} i AD, setter bare scannedByEmail som note`, error.stack || error.toString()])
+        logger.warn('Feilet ved henting av {ScannedByEmail} i AD, setter bare scannedByEmail som note: {ErrorMessage}', scannedByEmail, error.stack || error.toString())
       }
     }
     // If no adUser or not enabled, set simple note with scannedByEmail
@@ -76,7 +66,7 @@
     try {
       pdfData = await pdfTextExtract({ url: file.filePath, verbosity: 0 })
     } catch (error) {
-      logger('warn', ['Failed when reading pdf-text, will send to unreg without any further data', error.stack || error.toString()])
+      logger.warn('Failed when reading pdf-text, will send to unreg without any further data: {ErrorMessage}', error.stack || error.toString())
       pdfData = null
     }
 
@@ -92,11 +82,11 @@
         }
         if (vitnemal.foundType) { // We have what we need - move file along with data to job that handles vitnemål
           // move files and stuff and continue to next doc
-          logger('info', ['Fant vitnemål, og kan arkivere automatisk 😄 Flytter filen til vitnemål-input-mappe'])
+          logger.info('Fant vitnemål, og kan arkivere automatisk 😄 Flytter filen til vitnemål-input-mappe')
           try {
             moveToDir(file.filePath, VITNEMAL.INPUT_DIR)
           } catch (error) {
-            logger('warn', ['Offh, feila ved flytting av vitnemål... prøver igjen ved neste kjøring', error.stack || error.toString()])
+            logger.warn('Offh, feila ved flytting av vitnemål... prøver igjen ved neste kjøring: {ErrorMessage}', error.stack || error.toString())
           }
           continue
         }
@@ -105,7 +95,7 @@
         if (vitnemal.title && !documentData.title) documentData.title = vitnemal.title
       } catch (error) {
         // fancy error handling
-        logger('error', ['Failed when checking for vitnemål, will try again next run', error.stack || error.toString()])
+        logger.errorException(error, 'Failed when checking for vitnemål, will try again next run')
         continue
       }
 
@@ -117,11 +107,11 @@
         }
         if (kompetansebevis.foundType) { // We have what we need - move file along with data to job that handles kompetansebevis
           // move files and stuff and continue to next doc
-          logger('info', ['Fant kompetansebevis, og kan arkivere automatisk 😄 Flytter filen til kompetansebevis-input-mappe'])
+          logger.info('Fant kompetansebevis, og kan arkivere automatisk 😄 Flytter filen til kompetansebevis-input-mappe')
           try {
             moveToDir(file.filePath, KOMPETANSEBEVIS.INPUT_DIR)
           } catch (error) {
-            logger('warn', ['Offh, feila ved flytting av kompetansebevis... prøver igjen ved neste kjøring', error.stack || error.toString()])
+            logger.warn('Offh, feila ved flytting av kompetansebevis... prøver igjen ved neste kjøring: {ErrorMessage}', error.stack || error.toString())
           }
           continue
         }
@@ -130,7 +120,7 @@
         if (kompetansebevis.title && !documentData.title) documentData.title = kompetansebevis.title
       } catch (error) {
         // fancy error handling
-        logger('error', ['Failed when checking for kompetansebevis, will try again next run', error.stack || error.toString()])
+        logger.errorException(error, 'Failed when checking for kompetansebevis, will try again next run')
         continue
       }
 
@@ -140,10 +130,10 @@
       if (!documentData.title) {
         const probableTitle = getProbableTitle(pdfData.pages[0].textLines, knownTitles, zipcodes)
         if (probableTitle) {
-          logger('info', ['Found probable document title', probableTitle.title, 'type', probableTitle.type])
+          logger.info('Found probable document title {Title} - type {Type}', probableTitle.title, probableTitle.type)
           documentData.title = probableTitle.title
         } else {
-          logger('info', ['Could not find probable document title - setting default title'])
+          logger.info('Could not find probable document title - setting default title')
           documentData.title = 'Ukjent dokumentttype'
         }
       }
@@ -151,11 +141,11 @@
 
     try {
       const result = await sendToUnreg({ filename: documentData.title, note: documentData.note, ext: file.fileExt, origin: '2', filepath: file.filePath })
-      logger('info', ['Successfully imported to unregistered', result])
+      logger.info('Successfully imported to unregistered - Result: {@Result}', result)
       moveToDir(file.filePath, `${UNREGISTERED.INPUT_DIR}/imported`, `${documentData.title}_${file.fileName}`)
       // Opprett statistikk-element i stats db
       try {
-        logger('info', ['Creating statistics element'])
+        logger.info('Creating statistics element')
         const stat = {
           company: adUser?.Company || 'Ukjent',
           description: 'Et dokument scannet inn til P360',
@@ -163,18 +153,16 @@
           documentTitle: documentData.title
         }
         const statRes = await createStat(stat)
-        logger('info', ['Successfully made statistics element', 'Object id', statRes.insertedId])
+        logger.info('Successfully made statistics element - Object id: {InsertedId}', statRes.insertedId)
       } catch (innerError) {
-        logger('warn', ['Failed when creating stat element', innerError.response?.data || innerError.stack || innerError.toString()])
+        logger.warn('Failed when creating stat element: {ErrorMessage}', innerError.response?.data || innerError.stack || innerError.toString())
       }
     } catch (error) {
-      logger('error', ['Failed when uploading to unregistered (or when moving to imported) - moving to failed folder', error.response?.data || error.stack || error.toString()])
+      logger.errorException(error, 'Failed when uploading to unregistered (or when moving to imported) - moving to failed folder')
       moveToDir(file.filePath, `${UNREGISTERED.INPUT_DIR}/failed`, `${documentData.title}_${file.fileName}`)
     }
   }
-  logConfig({
-    prefix: 'import-to-unregistered-p360'
-  })
+  logger.logConfig({ prefix: 'import-to-unregistered-p360' })
   // Delete documents that are old enough - both from imported - and delete the xml-log-files from pixedit in the input-folder
   deleteOldFiles(`${UNREGISTERED.INPUT_DIR}/imported`, 30, 'pdf')
   deleteOldFiles(UNREGISTERED.UNNECESSARY_XML_DIR, 30, 'xml')

@@ -1,8 +1,7 @@
 (async () => {
   const { getFilesInDirWithMetadata } = require('../lib/file-tools')
   const { TEST_TITLES_INPUT_DIR, TEST_TITLES_OUTPUT_DIR } = require('../config')
-  const { logger, logConfig } = require('@vtfk/logger')
-  const { createLocalLogger } = require('../lib/create-local-logger')
+  const { logger } = require('@vestfoldfylke/loglady')
   const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
   const { getProbableTitle } = require('../lib/title-check')
   const knownTitles = require('../data/known-titles.json')
@@ -10,35 +9,26 @@
   const { getTextElements } = require('../lib/text-tools')
   const { writeFileSync } = require('fs')
 
-  // Set up logging
-  logConfig({
-    prefix: 'test-probable-titles',
-    teams: {
-      onlyInProd: false
-    },
-    localLogger: createLocalLogger('test-probable-titles')
-  })
+  logger.logConfig({ prefix: 'test-probable-titles' })
 
   knownTitles.sort((a, b) => b.matchTextLine.length - a.matchTextLine.length)
-  logger('info', ['Sorted knownTitles by length, longest first - for use in titleCheck'])
+  logger.info('Sorted knownTitles by length, longest first - for use in titleCheck')
 
-  logger('info', [`Checking for files in ${TEST_TITLES_INPUT_DIR}`])
+  logger.info('Checking for files in {InputDir}', TEST_TITLES_INPUT_DIR)
   const files = getFilesInDirWithMetadata(TEST_TITLES_INPUT_DIR)
-  logger('info', [`${files.length} files ready for handling in ${TEST_TITLES_INPUT_DIR}`])
+  logger.info('{FileCount} files ready for handling in {InputDir}', files.length, TEST_TITLES_INPUT_DIR)
 
   const probableTitles = []
   const allFoundTitles = []
 
   for (const file of files) {
-    logConfig({
-      prefix: `test-probable-titles - ${file.fileName}`
-    })
+    logger.logConfig({ prefix: `test-probable-titles - ${file.fileName}` })
 
     let pdfData
     try {
       pdfData = await pdfTextExtract({ url: file.filePath, verbosity: 0 })
     } catch (error) {
-      logger('warn', ['Failed when reading pdf-text, will send to unreg without any further data'])
+      logger.warn('Failed when reading pdf-text, will send to unreg without any further data: {ErrorMessage}', error.stack || error.toString())
       pdfData = null
     }
     if (!pdfData) continue

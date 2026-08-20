@@ -2,18 +2,10 @@
   const { getFilesInDirWithMetadata, moveToDir, deleteOldFiles } = require('../lib/file-tools')
   const { BARCODE } = require('../config')
   const { sendToUnreg, sendToDocument } = require('../lib/archive')
-  const { logger, logConfig } = require('@vtfk/logger')
-  const { createLocalLogger } = require('../lib/create-local-logger')
+  const { logger } = require('@vestfoldfylke/loglady')
   const { createStat } = require('../lib/stats')
 
-  // Set up logging
-  logConfig({
-    prefix: 'import-barcode-to-p360',
-    teams: {
-      onlyInProd: false
-    },
-    localLogger: createLocalLogger('import-barcode-to-p360')
-  })
+  logger.logConfig({ prefix: 'import-barcode-to-p360' })
 
   const isNumber = num => { return !isNaN(num) }
 
@@ -40,37 +32,37 @@
     }
   }
 
-  logger('info', [`Checking for files in ${BARCODE.INPUT_DIR}`])
+  logger.info('Checking for files in {InputDir}', BARCODE.INPUT_DIR)
   const files = getFilesInDirWithMetadata(BARCODE.INPUT_DIR, 'pdf')
-  logger('info', [`${files.length} files ready for handling in ${BARCODE.INPUT_DIR}`])
+  logger.info('{FileCount} files ready for handling in {InputDir}', files.length, BARCODE.INPUT_DIR)
 
   for (const file of files) {
     let barcodeData = null
     try {
-      logger('info', [`Getting barcodedata for file ${file.filePath}`])
+      logger.info('Getting barcodedata for file {FilePath}', file.filePath)
       barcodeData = getBarcodeData(file.fileNameWithoutExt)
-      logger('info', [`Got barcodedata for file ${file.filePath}, nice nice`])
+      logger.info('Got barcodedata for file {FilePath}, nice nice', file.filePath)
     } catch (error) {
       // Det er noe galt med dette dok - sender det rett til uregistrerte i stedet bare
-      logger('error', [`Oh no, something is wrong with barcode data - ${error.toString()}, sending to unregistered instead`])
+      logger.errorException(error, 'Oh no, something is wrong with barcode data, sending to unregistered instead')
       try {
         const result = await sendToUnreg({ filename: file.fileNameWithoutExt, note: 'Dokument feilet ved strekkode-lesing', ext: file.fileExt, origin: '2', filepath: file.filePath })
-        logger('info', ['Failed barcode sent to unregistered', result])
+        logger.info('Failed barcode sent to unregistered - Result: {@Result}', result)
         moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-imported-to-unregistered`)
         continue // Skip to next file
       } catch (innerError) {
-        logger('error', ['Aiuau, failed when sending failed barcode to unregistered, will try again next run', innerError.response?.data || innerError.stack || innerError.toString()])
+        logger.errorException(innerError, 'Aiuau, failed when sending failed barcode to unregistered, will try again next run')
         continue // Skip to next file
       }
     }
     try {
-      logger('info', [`sending ${file.filePath} to document in P360 with recno: ${barcodeData.docRecno}`])
+      logger.info('Sending {FilePath} to document in P360 with recno: {DocRecno}', file.filePath, barcodeData.docRecno)
       await sendToDocument(barcodeData, file)
       moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-imported`)
-      logger('info', [`Succesfylly added ${file.filePath} to document in P360 with recno: ${barcodeData.docRecno}`])
+      logger.info('Succesfylly added {FilePath} to document in P360 with recno: {DocRecno}', file.filePath, barcodeData.docRecno)
       // Opprett statistikk-element i stats db
       try {
-        logger('info', ['Creating statistics element'])
+        logger.info('Creating statistics element')
         const stat = {
           company: 'Ukjent',
           description: 'Et dokument scannet inn til P360 med strekkode',
@@ -78,17 +70,17 @@
           documentTitle: 'Strekkode-scanning'
         }
         const statRes = await createStat(stat)
-        logger('info', ['Successfully made statistics element', 'Object id', statRes.insertedId])
+        logger.info('Successfully made statistics element - Object id: {InsertedId}', statRes.insertedId)
       } catch (innerError) {
-        logger('warn', ['Failed when creating stat element', innerError.response?.data || innerError.stack || innerError.toString()])
+        logger.warn('Failed when creating stat element: {ErrorMessage}', innerError.response?.data || innerError.stack || innerError.toString())
       }
     } catch (error) {
       if (error.toString().includes(' does not exist...') || (error.response?.data?.message && error.response?.data?.message.includes('does not exist in Document'))) {
-        logger('error', [`Oh no, document with recno ${barcodeData.docRecno} does not exist... moving to failed`, error.response?.data || error.stack || error.toString()])
+        logger.errorException(error, 'Oh no, document with recno {DocRecno} does not exist... moving to failed', barcodeData.docRecno)
         moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-failed`)
         continue
       }
-      logger('error', [`Oh no, something went wrong when sending ${file.filePath} to P360 document with recno: ${barcodeData.docRecno}, will try again next run`, error.response?.data || error.stack || error.toString()])
+      logger.errorException(error, 'Oh no, something went wrong when sending {FilePath} to P360 document with recno: {DocRecno}, will try again next run', file.filePath, barcodeData.docRecno)
     }
   }
 
