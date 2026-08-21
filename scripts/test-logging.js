@@ -1,4 +1,5 @@
-;(async () => {
+// biome-ignore format: preserve leading semicolon
+(async () => {
   const { logger } = require("@vestfoldfylke/loglady")
 
   logger.logConfig({ prefix: "test-logging" })

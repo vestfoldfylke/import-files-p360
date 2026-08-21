@@ -1,4 +1,5 @@
-;(async () => {
+// biome-ignore format: preserve leading semicolon
+(async () => {
   const path = require("node:path")
   const { existsSync } = require("node:fs")
   const { spawnSync } = require("node:child_process")

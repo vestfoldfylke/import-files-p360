@@ -1,4 +1,5 @@
-;(async () => {
+// biome-ignore format: preserve leading semicolon
+(async () => {
   const { getFilesInDirWithMetadata, moveToDir } = require("../lib/file-tools")
   const { logger } = require("@vestfoldfylke/loglady")
   const { pdfTextExtract } = require("../lib/pdf-text-extract")

@@ -1,4 +1,5 @@
-;(async () => {
+// biome-ignore format: preserve leading semicolon
+(async () => {
   const { getFilesInDirWithMetadata, moveToDir, deleteOldFiles } = require("../lib/file-tools")
   const { BARCODE } = require("../config")
   const { sendToUnreg, sendToDocument } = require("../lib/archive")

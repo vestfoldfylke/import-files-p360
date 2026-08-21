@@ -1,4 +1,5 @@
-;(async () => {
+// biome-ignore format: preserve leading semicolon
+(async () => {
   const { getFilesInDirWithMetadata, moveToDir, deleteOldFiles } = require("../lib/file-tools")
   const { UNREGISTERED, VITNEMAL, KOMPETANSEBEVIS } = require("../config")
   const { sendToUnreg } = require("../lib/archive")
