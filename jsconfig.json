@@ -11,11 +11,6 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "include": [
-    "lib/**/*.js",
-    "scripts/**/*.js",
-    "tests/**/*.js",
-    "config.js"
-  ],
+  "include": ["lib/**/*.js", "scripts/**/*.js", "tests/**/*.js", "config.js"],
   "exclude": ["node_modules"]
 }
