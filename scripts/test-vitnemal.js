@@ -49,7 +49,7 @@
           }
           continue
         }
-        
+
         logger.info("Fant itj vitnemål her altså... lagrer text for å se pån")
         const p1 = `${file.filePath.substring(0, file.filePath.lastIndexOf("."))}-text.json`
         writeFileSync(p1, JSON.stringify({ pdfData, vitnemal }, null, 2))

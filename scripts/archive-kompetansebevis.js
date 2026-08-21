@@ -5,7 +5,7 @@
   const { callArchive } = require("../lib/call-archive")
   const { pdfTextExtract } = require("../lib/pdf-text-extract")
   const { getKompetansebevis } = require("../lib/document-types/kompetansebevis")
-  const { readFileSync } = require("fs")
+  const { readFileSync } = require("node:fs")
   const { createStat } = require("../lib/stats")
   const { formatError } = require("../lib/error-tools")
 
@@ -79,7 +79,7 @@
       continue
     }
 
-    const kompetansebevisTitle = `Kompetansebevis${kompetansebevis.year ? " - " + kompetansebevis.year : ""}`
+    const kompetansebevisTitle = `Kompetansebevis${kompetansebevis.year ? ` - ${kompetansebevis.year}` : ""}`
 
     const kompetansebevisPayload = {
       service: "DocumentService",
@@ -124,7 +124,7 @@
       const result = await callArchive("Archive", kompetansebevisPayload)
       logger.info("Successfully archived kompetansebevis - Result: {@Result}", result)
       moveToDir(file.filePath, `${KOMPETANSEBEVIS.INPUT_DIR}/imported`)
-      
+
       // Opprett statistikk-element i stats db
       try {
         logger.info("Creating statistics element")
@@ -143,7 +143,7 @@
       logger.errorException(error, "Failed when archiving kompetansebevis (or when moving to imported - might archive twice) - will try again next run")
     }
   }
-  
+
   logger.logConfig({ prefix: "archive-kompetansebevis" })
   // Delete documents that are old enough from imported
   deleteOldFiles(`${KOMPETANSEBEVIS.INPUT_DIR}/imported`, 30, "pdf")

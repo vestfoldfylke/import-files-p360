@@ -5,7 +5,7 @@
   const { callArchive } = require("../lib/call-archive")
   const { pdfTextExtract } = require("../lib/pdf-text-extract")
   const { getVitnemal } = require("../lib/document-types/vitnemal")
-  const { readFileSync } = require("fs")
+  const { readFileSync } = require("node:fs")
   const { createStat } = require("../lib/stats")
   const { formatError } = require("../lib/error-tools")
 
@@ -58,7 +58,7 @@
     if (!vitnemal.documentDate) {
       vitnemal.documentDate = new Date().toISOString()
     }
-    
+
     // If we do not have school, set fallback school
     if (!vitnemal.school) {
       vitnemal.school = {
@@ -141,7 +141,7 @@
       logger.errorException(error, "Failed when archiving vitnemal (or when moving to imported - might archive twice) - will try again next run")
     }
   }
-  
+
   logger.logConfig({ prefix: "archive-vitnemal" })
   // Delete documents that are old enough from imported
   deleteOldFiles(`${VITNEMAL.INPUT_DIR}/imported`, 30, "pdf")

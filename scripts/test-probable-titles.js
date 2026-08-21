@@ -58,7 +58,7 @@
       }
     }
   }
-  
+
   allFoundTitles.sort((a, b) => b.number - a.number)
 
   writeFileSync(`${TEST_TITLES_OUTPUT_DIR}/_0all-titles.json`, JSON.stringify(allFoundTitles, null, 2))

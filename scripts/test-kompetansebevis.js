@@ -24,7 +24,7 @@
       logger.warn("Failed when reading pdf-text: {ErrorMessage}", formatError(error))
       pdfData = null // Why just not continue here - am i idiot? yes
     }
-    
+
     if (!pdfData) {
       continue
     }
@@ -50,10 +50,10 @@
           }
           continue
         }
-        
+
         logger.info("Fant itj kompetansebevis her altså... lagrer text for å se pån")
         const p1 = `${file.filePath.substring(0, file.filePath.lastIndexOf("."))}-text.json`
-        
+
         writeFileSync(p1, JSON.stringify({ pdfData, kompetansebevis }, null, 2))
       } catch (error) {
         // fancy error handling

@@ -81,7 +81,7 @@
 
   for (const file of files) {
     let barcodeData = null
-    
+
     try {
       logger.info("Getting barcodedata for file {FilePath}", file.filePath)
       barcodeData = getBarcodeData(file.fileNameWithoutExt)
@@ -105,7 +105,7 @@
       await sendToDocument(barcodeData, file)
       moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-imported`)
       logger.info("Succesfylly added {FilePath} to document in P360 with recno: {DocRecno}", file.filePath, barcodeData.docRecno)
-      
+
       // Opprett statistikk-element i stats db
       try {
         logger.info("Creating statistics element")
