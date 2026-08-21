@@ -141,3 +141,6 @@ local-data/
 
 # Local cache files
 .token-cache/
+
+# Mac
+.DS_Store
