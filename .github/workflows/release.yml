@@ -1,9 +1,12 @@
-name: Run tests and build runnable script files
+name: Run tests and build runnable script files, and release them
 
 on:
-  release:
-    types: [created]
   workflow_dispatch:
+    inputs:
+      prerelease:
+        description: 'Mark as prerelease'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -14,17 +17,11 @@ jobs:
     with:
       audit_severity: "moderate"
 
-  build:
-    if: |
-      github.event.release.draft == true &&
-      ((github.event_name == 'release' && github.event.release.target_commitish == 'main') ||
-      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'))
+  release:
     needs: call-security
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ github.event.release.tag_name }}
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -35,15 +32,28 @@ jobs:
       - run: npm test
       - run: npm run build
 
-      - name: Package dist
-        run: zip -r "${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip" dist
+      - name: Read version from package.json
+        id: pkg
+        run: echo "version=v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
-      - name: Attach asset to draft
-        run: gh release upload "${{ github.event.release.tag_name }}" "${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip" --clobber
+      - name: Verify tag does not already exist
+        run: |
+          if gh release view "${{ steps.pkg.outputs.version }}" >/dev/null 2>&1; then
+            echo "Release ${{ steps.pkg.outputs.version }} already exists — bump the version in package.json." >&2
+            exit 1
+          fi
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Publish draft (locks immutability with asset attached)
-        run: gh release edit "${{ github.event.release.tag_name }}" --draft=false
+      - name: Package dist
+        run: zip -r "${{ github.event.repository.name }}-${{ steps.pkg.outputs.version }}.zip" dist
+
+      - name: Create release with asset
+        run: |
+          gh release create "${{ steps.pkg.outputs.version }}" \
+            "${{ github.event.repository.name }}-${{ steps.pkg.outputs.version }}.zip" \
+            --target "${{ github.sha }}" \
+            --generate-notes \
+            ${{ inputs.prerelease && '--prerelease' || '' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
