@@ -167,3 +167,6 @@ VERBOSE=true npm run archive-kompetansebevis
 
 ### Logger
 Fillogging via `lib/local-logger.js` skriver til `<deploy-rot>/logs/<script-navn>/YYYY - MM.log` (relativt til bundlens plassering, dvs. `dist/../logs/`).
+
+### Bye bye
+Ha en fin dag
