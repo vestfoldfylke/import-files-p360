@@ -1,10 +1,11 @@
 // biome-ignore format: preserve leading semicolon
 (async () => {
-  const path = require("node:path")
+  require("../lib/local-logger")
+
   const { existsSync } = require("node:fs")
   const { spawnSync } = require("node:child_process")
   const { logger } = require("@vestfoldfylke/loglady")
-  const { getUnregAdUser } = require("../lib/get-ad-user")
+  const { getUnregAdUser, SCRIPT_PATH: scriptPath } = require("../lib/get-ad-user")
 
   logger.logConfig({ prefix: "test-get-ad-user" })
 
@@ -18,7 +19,6 @@
     logger.error(message, ...params)
   }
 
-  const scriptPath = path.join(__dirname, "..", "lib", "get-ad-user.ps1")
   logger.info("Steg 1: Sjekker at PowerShell-scriptet finnes på {ScriptPath}", scriptPath)
   if (!existsSync(scriptPath)) {
     fail("PS1-scriptet finnes ikke - kan ikke fortsette")

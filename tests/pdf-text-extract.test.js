@@ -7,7 +7,7 @@ describe("pdfTextExtract loaded by URL", () => {
   test("example-pdf.pdf (one page, one column, mixed styling) exposes the expected line on page 1", async () => {
     const pdfData = await pdfTextExtract({
       url: "./tests/data/example-pdf.pdf",
-      verbosity: 0,
+      verbosity: 0
     })
 
     assert.equal(pdfData.pages[0].textLines[4], "SOME Larger TEXT")
@@ -16,7 +16,7 @@ describe("pdfTextExtract loaded by URL", () => {
   test("example-pdf-2.pdf (two pages, two columns, vertical text) exposes the expected line on page 2", async () => {
     const pdfData = await pdfTextExtract({
       url: "./tests/data/example-pdf-2.pdf",
-      verbosity: 0,
+      verbosity: 0
     })
 
     assert.equal(pdfData.pages[1].textLines[1], "maybe not if the text is really malformed")

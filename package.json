@@ -14,15 +14,8 @@
     "vtfk-schools-info": "^3.4.1"
   },
   "scripts": {
-    "arkiver-kompetansebevis": "node ./lib/run-script.js ./scripts/archive-kompetansebevis.js",
-    "arkiver-vitnemal": "node ./lib/run-script.js ./scripts/archive-vitnemal.js",
-    "import-strekkode-til-p360": "node ./lib/run-script.js ./scripts/import-barcode-to-p360.js",
-    "import-til-uregistrerte-p360": "node ./lib/run-script.js ./scripts/import-to-unregistered-p360.js",
-    "manuell-test-get-ad-user": "node ./lib/run-script.js ./scripts/test-get-ad-user.js",
-    "manuell-test-kompetansebevis": "node ./lib/run-script.js ./scripts/test-kompetansebevis.js",
-    "manuell-test-logging": "node ./lib/run-script.js ./scripts/test-logging.js",
-    "manuell-test-sannsynlige-titler": "node ./lib/run-script.js ./scripts/test-probable-titles.js",
-    "manuell-test-vitnemal": "node ./lib/run-script.js ./scripts/test-vitnemal.js",
+    "build": "node esbuild.config.js",
+    "build:watch": "node esbuild.config.js --watch",
     "test": "node --test \"tests/**/*.test.js\"",
     "test:verbose": "node --test --test-reporter=spec \"tests/**/*.test.js\"",
     "typecheck": "tsc -p jsconfig.json",
@@ -41,6 +34,7 @@
   "homepage": "https://github.com/vestfoldfylke/import-files-p360#readme",
   "devDependencies": {
     "@types/node": "^26.2.0",
+    "esbuild": "^0.28.2",
     "typescript": "^7.0.2"
   }
 }

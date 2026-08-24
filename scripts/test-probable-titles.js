@@ -1,5 +1,7 @@
 // biome-ignore format: preserve leading semicolon
 (async () => {
+  require("../lib/local-logger")
+
   const { getFilesInDirWithMetadata } = require("../lib/file-tools")
   const { TEST_TITLES_INPUT_DIR, TEST_TITLES_OUTPUT_DIR } = require("../config")
   const { logger } = require("@vestfoldfylke/loglady")

@@ -1,4 +1,7 @@
-;(async () => {
+// biome-ignore format: preserve leading semicolon
+(async () => {
+  require("../lib/local-logger")
+
   const { getFilesInDirWithMetadata, moveToDir, deleteOldFiles } = require("../lib/file-tools")
   const { KOMPETANSEBEVIS } = require("../config")
   const { logger } = require("@vestfoldfylke/loglady")
