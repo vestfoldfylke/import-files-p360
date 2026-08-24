@@ -9,11 +9,17 @@ permissions:
   contents: write
 
 jobs:
+  call-security:
+    uses: vestfoldfylke/shared/.github/workflows/npm-security.yml@main
+    with:
+      audit_severity: "moderate"
+
   build:
     if: |
       github.event.release.draft == true &&
       ((github.event_name == 'release' && github.event.release.target_commitish == 'main') ||
       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'))
+    needs: call-security
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
