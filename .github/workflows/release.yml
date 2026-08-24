@@ -1,0 +1,43 @@
+name: Run tests and build runnable script files
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: |
+      github.event.release.draft == true &&
+      ((github.event_name == 'release' && github.event.release.target_commitish == 'main') ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'))
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+      - name: Package dist
+        run: zip -r "${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip" dist
+
+      - name: Attach asset to draft
+        run: gh release upload "${{ github.event.release.tag_name }}" "${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip" --clobber
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Publish draft (locks immutability with asset attached)
+        run: gh release edit "${{ github.event.release.tag_name }}" --draft=false
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

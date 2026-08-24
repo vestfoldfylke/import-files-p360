@@ -1,16 +1,14 @@
-require('dotenv').config()
-
 module.exports = {
   COUNTY_NUMBER: process.env.COUNTY_NUMBER,
-  TEST_TITLES_INPUT_DIR: process.env.TEST_TITLES_INPUT_DIR || './tests/local-data/test-titles',
-  TEST_TITLES_OUTPUT_DIR: process.env.TEST_TITLES_OUTPUT_DIR || './tests/local-data/test-titles/result',
+  TEST_TITLES_INPUT_DIR: process.env.TEST_TITLES_INPUT_DIR || "./tests/local-data/test-titles",
+  TEST_TITLES_OUTPUT_DIR: process.env.TEST_TITLES_OUTPUT_DIR || "./tests/local-data/test-titles/result",
   BARCODE: {
     INPUT_DIR: process.env.BARCODE_INPUT_DIR
   },
   UNREGISTERED: {
     INPUT_DIR: process.env.UNREGISTERED_INPUT_DIR,
     UNNECESSARY_XML_DIR: process.env.UNREGISTERED_UNNECESSARY_XML_DIR,
-    GET_AD_USER: (process.env.UNREGISTERED_GET_AD_USER && process.env.UNREGISTERED_GET_AD_USER === 'true') || false,
+    GET_AD_USER: (process.env.UNREGISTERED_GET_AD_USER && process.env.UNREGISTERED_GET_AD_USER === "true") || false,
     AD_MAIN_COUNTY_OU: process.env.UNREGISTERED_AD_MAIN_COUNTY_OU
   },
   APPREG: {

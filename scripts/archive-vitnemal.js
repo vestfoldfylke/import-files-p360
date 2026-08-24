@@ -1,37 +1,41 @@
+// biome-ignore format: preserve leading semicolon
 (async () => {
-  const { getFilesInDirWithMetadata, moveToDir, deleteOldFiles } = require('../lib/file-tools')
-  const { VITNEMAL } = require('../config')
-  const { logger, logConfig } = require('@vtfk/logger')
-  const { callArchive } = require('../lib/call-archive')
-  const { createLocalLogger } = require('../lib/create-local-logger')
-  const { pdfTextExtract } = require('@vestfoldfylke/pdf-text-extract')
-  const { getVitnemal } = require('../lib/document-types/vitnemal')
-  const { readFileSync } = require('fs')
-  const { createStat } = require('../lib/stats')
+  require("../lib/local-logger")
 
-  // Set up logging
-  logConfig({
-    prefix: 'archive-vitnemal',
-    teams: {
-      onlyInProd: false
-    },
-    localLogger: createLocalLogger('archive-vitnemal')
-  })
+  const { getFilesInDirWithMetadata, moveToDir, deleteOldFiles } = require("../lib/file-tools")
+  const { VITNEMAL } = require("../config")
+  const { logger } = require("@vestfoldfylke/loglady")
+  const { callArchive } = require("../lib/call-archive")
+  const { pdfTextExtract } = require("../lib/pdf-text-extract")
+  const { getVitnemal } = require("../lib/document-types/vitnemal")
+  const { readFileSync } = require("node:fs")
+  const { createStat } = require("../lib/stats")
+  const { formatError } = require("../lib/error-tools")
 
-  logger('info', [`Checking for files in ${VITNEMAL.INPUT_DIR}`])
-  const files = getFilesInDirWithMetadata(VITNEMAL.INPUT_DIR, 'pdf')
-  logger('info', [`${files.length} files ready for handling in ${VITNEMAL.INPUT_DIR}`])
+  logger.logConfig({ prefix: "archive-vitnemal" })
+
+  if (!VITNEMAL.INPUT_DIR) {
+    throw new Error("VITNEMAL_INPUT_DIR must be set")
+  }
+  if (!VITNEMAL.FALLBACK_ORGANIZATION_NUMBER) {
+    throw new Error("VITNEMAL_FALLBACK_ORGANIZATION_NUMBER must be set")
+  }
+  if (!VITNEMAL.FALLBACK_ACCESS_GROUP) {
+    throw new Error("VITNEMAL_FALLBACK_ACCESS_GROUP must be set")
+  }
+
+  logger.info("Checking for files in {InputDir}", VITNEMAL.INPUT_DIR)
+  const files = getFilesInDirWithMetadata(VITNEMAL.INPUT_DIR, "pdf")
+  logger.info("{FileCount} files ready for handling in {InputDir}", files.length, VITNEMAL.INPUT_DIR)
 
   for (const file of files) {
-    logConfig({
-      prefix: `archive-vitnemal - ${file.fileName}`
-    })
+    logger.logConfig({ prefix: `archive-vitnemal - ${file.fileName}` })
 
     let pdfData
     try {
       pdfData = await pdfTextExtract({ url: file.filePath, verbosity: 0 })
     } catch (error) {
-      logger('warn', ['Failed when reading pdf-text, will wait until next run', error.stack || error.toString()])
+      logger.warn("Failed when reading pdf-text, will wait until next run: {ErrorMessage}", formatError(error))
       continue
     }
 
@@ -39,21 +43,25 @@
     let vitnemal
     try {
       vitnemal = await getVitnemal(pdfData)
-      if (vitnemal.waitForNextRun) { // FREG failed with some internal error - let's try again next run instead
+      if (vitnemal.waitForNextRun) {
+        // FREG failed with some internal error - let's try again next run instead
         continue // maybe log as well
       }
-      if (!vitnemal.foundType) {
-        logger('warn', ['Har et vitnemål, men har ikke nok data!! Her er det noget kluss....'])
+      if (!vitnemal.foundType || !vitnemal.privatePerson) {
+        logger.warn("Har et vitnemål, men har ikke nok data!! Her er det noget kluss....")
         continue
       }
     } catch (error) {
       // fancy error handling
-      logger('error', ['Failed when getting data for vitnemål, will try again next run', error.stack || error.toString()])
+      logger.errorException(error, "Failed when getting data for vitnemål, will try again next run")
       continue
     }
 
     // If we do not have document-date, set todays date
-    if (!vitnemal.documentDate) vitnemal.documentDate = new Date().toISOString()
+    if (!vitnemal.documentDate) {
+      vitnemal.documentDate = new Date().toISOString()
+    }
+
     // If we do not have school, set fallback school
     if (!vitnemal.school) {
       vitnemal.school = {
@@ -65,49 +73,49 @@
     // Sync Elevmappe for student
     let elevmappe
     try {
-      const syncElevmappeRes = await callArchive('SyncElevmappe', { ssn: vitnemal.privatePerson.ssn })
+      const syncElevmappeRes = await callArchive("SyncElevmappe", { ssn: vitnemal.privatePerson.ssn })
       elevmappe = syncElevmappeRes.elevmappe
-      logger('info', ['Successfully synced elevmappe', syncElevmappeRes.elevmappe.CaseNumber])
+      logger.info("Successfully synced elevmappe - CaseNumber: {CaseNumber}", syncElevmappeRes.elevmappe.CaseNumber)
     } catch (error) {
-      logger('error', ['Failed when syncing elevmappe - will try again next run', error.response?.data || error.stack || error.toString()])
+      logger.errorException(error, "Failed when syncing elevmappe - will try again next run")
       continue
     }
 
-    const vitnemalTitle = `Vitnemål${vitnemal.year ? ' - ' + vitnemal.year : ''}`
+    const vitnemalTitle = `Vitnemål${vitnemal.year ? ` - ${vitnemal.year}` : ""}`
 
     const vitnemalPayload = {
-      service: 'DocumentService',
-      method: 'CreateDocument',
+      service: "DocumentService",
+      method: "CreateDocument",
       parameter: {
-        Archive: 'Elevdokument',
+        Archive: "Elevdokument",
         CaseNumber: elevmappe.CaseNumber,
         Title: vitnemalTitle,
         UnofficialTitle: `${vitnemalTitle} - ${vitnemal.privatePerson.name}`,
         DocumentDate: vitnemal.documentDate,
-        Category: 'Dokument ut',
-        Status: 'J',
-        AccessCode: '26',
-        Paragraph: 'Offl. § 26 første ledd',
-        AccessCodeDescription: 'Offl §26 eksamensbesvarelser, fødelsnummer, personbilder i personregister',
+        Category: "Dokument ut",
+        Status: "J",
+        AccessCode: "26",
+        Paragraph: "Offl. § 26 første ledd",
+        AccessCodeDescription: "Offl §26 eksamensbesvarelser, fødelsnummer, personbilder i personregister",
         AccessGroup: vitnemal.school.accessGroup,
         ResponsibleEnterpriseNumber: vitnemal.school.organizationNumber,
         Contacts: [
           {
             ReferenceNumber: vitnemal.privatePerson.ssn,
-            Role: 'Mottaker',
+            Role: "Mottaker",
             IsUnofficial: true
           },
           {
             ReferenceNumber: vitnemal.school.organizationNumber,
-            Role: 'Avsender',
+            Role: "Avsender",
             IsUnofficial: false
           }
         ],
         Files: [
           {
             Title: vitnemalTitle,
-            Format: 'pdf',
-            Base64Data: Buffer.from(readFileSync(file.filePath)).toString('base64')
+            Format: "pdf",
+            Base64Data: Buffer.from(readFileSync(file.filePath)).toString("base64")
           }
         ]
       }
@@ -115,31 +123,29 @@
 
     // Archive the vitnemål
     try {
-      const result = await callArchive('Archive', vitnemalPayload)
-      logger('info', ['Successfully archived vitnemal', result])
+      const result = await callArchive("Archive", vitnemalPayload)
+      logger.info("Successfully archived vitnemal - Result: {@Result}", result)
       moveToDir(file.filePath, `${VITNEMAL.INPUT_DIR}/imported`)
       // Opprett statistikk-element i stats db
       try {
-        logger('info', ['Creating statistics element'])
+        logger.info("Creating statistics element")
         const stat = {
-          company: vitnemal.school?.name || 'Ukjent',
-          description: 'Automatisk arkivert vitnemål fra scanner',
-          type: 'vitnemål',
-          documentTitle: 'Vitnemål'
+          company: vitnemal.school?.name || "Ukjent",
+          description: "Automatisk arkivert vitnemål fra scanner",
+          type: "vitnemål",
+          documentTitle: "Vitnemål"
         }
         const statRes = await createStat(stat)
-        logger('info', ['Successfully made statistics element', 'Object id', statRes.insertedId])
+        logger.info("Successfully made statistics element - Object id: {InsertedId}", statRes.insertedId)
       } catch (innerError) {
-        logger('warn', ['Failed when creating stat element', innerError.response?.data || innerError.stack || innerError.toString()])
+        logger.warn("Failed when creating stat element: {ErrorMessage}", formatError(innerError))
       }
     } catch (error) {
-      logger('error', ['Failed when archiving vitnemal (or when moving to imported - might archive twice) - will try again next run', error.response?.data || error.stack || error.toString()])
-      continue
+      logger.errorException(error, "Failed when archiving vitnemal (or when moving to imported - might archive twice) - will try again next run")
     }
   }
-  logConfig({
-    prefix: 'archive-vitnemal'
-  })
+
+  logger.logConfig({ prefix: "archive-vitnemal" })
   // Delete documents that are old enough from imported
-  deleteOldFiles(`${VITNEMAL.INPUT_DIR}/imported`, 30, 'pdf')
+  deleteOldFiles(`${VITNEMAL.INPUT_DIR}/imported`, 30, "pdf")
 })()

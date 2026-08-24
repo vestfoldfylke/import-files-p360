@@ -2,6 +2,9 @@
 Script som håndterer import av scannede filer til p360
 
 ## OBS!
+> [!WARNING]
+> Når du kjører en release - husk å lagre som "draft" (ikke publiser) for at workflowen skal kjøre!
+
 Krever minimum Nodejs v.20.18.1
 
 ## PIXEDIT-flyt (Fra scannerne)
@@ -21,8 +24,8 @@ Krever minimum Nodejs v.20.18.1
 
 ## Strekkode import (import-barcode-to-p360)
 Kjøres med
-`node ./scripts/import-barcode-to-p360.js`
-Fra rotnivå her
+`npm run import-strekkode-til-p360`
+Fra rotnivå her (npm-scriptet laster `.env` og skriver logg til `logs/` automatisk)
 
 ### Flyt
 - Sjekker BARCODE_INPUT_DIR for filer
@@ -35,8 +38,8 @@ Fra rotnivå her
 
 ## Uregistrerte import (import-to-unregistered-p360)
 Kjøres med
-`node ./scripts/import-to-unregistered-p360.js`
-Fra rotnivå her
+`npm run import-til-uregistrerte-p360`
+Fra rotnivå her (npm-scriptet laster `.env` og skriver logg til `logs/` automatisk)
 
 ### Flyt
 - Sjekker UNREGISTERED_INPUT_DIR for filer
@@ -55,8 +58,8 @@ Fra rotnivå her
 
 ## Vitnemål-arkivering (archive-vitnemal)
 Kjøres med
-`node ./scripts/archive-vitnemal.js`
-Fra rotnivå her
+`npm run arkiver-vitnemal`
+Fra rotnivå her (npm-scriptet laster `.env` og skriver logg til `logs/` automatisk)
 
 ### Flyt
 - Sjekker VITNEMAL_INPUT_DIR for filer
@@ -68,8 +71,8 @@ Fra rotnivå her
 
 ## Kompetansebevis-arkivering (archive-kompetansebevis)
 Kjøres med
-`node ./scripts/archive-kompetansebevis.js`
-Fra rotnivå her
+`npm run arkiver-kompetansebevis`
+Fra rotnivå her (npm-scriptet laster `.env` og skriver logg til `logs/` automatisk)
 
 ### Flyt
 - Sjekker KOMPETANSEBEVIS_INPUT_DIR for filer
@@ -90,7 +93,7 @@ Da får du pling i teams ved loglevel WARN og høyere
 ## Setup
 Klon ned prosjektet fra github (git clone repo-url)
 
-Sjekk at du har Node installert (versjon 18 eller nyere)
+Sjekk at du har Node installert (versjon 20.18.1 eller nyere)
 
 ```bash
 npm i
@@ -119,3 +122,48 @@ STATISTICS_URL="url til statistikk api"
 STATISTICS_KEY="api nøkkel til statistikk api"
 TEAMS_WEBHOOK_URL="teams_channel_webhook_url_you_got_from_teams" # Hvis du ønsker varsling i Teams på feil
 ```
+
+## Kjøring fra `dist` på server
+Prosjektet bygges til én selvforsynt fil per script i `dist/`. Bundlen inneholder all kode og npm-avhengigheter — `node_modules` trengs ikke på server.
+
+### Bygg lokalt
+```bash
+npm run build
+```
+Dette produserer `dist/` med:
+- `<script-navn>.js` og `<script-navn>.js.map` per script i `scripts/`
+- `package.json` med ett `scripts`-entry per bundlet script (klar for `npm run`)
+- `README.md` (denne filen)
+
+### Deploy
+Kopier hele `dist/`-mappen til serveren. `node_modules` skal **ikke** kopieres.
+
+Anbefalt layout på server:
+```
+<deploy-rot>/
+  dist/
+    <script>.js
+    <script>.js.map
+    package.json
+    README.md
+  .env
+  logs/          ← opprettes automatisk ved første kjøring
+```
+
+### Kjør et script
+Fra `<deploy-rot>/dist/`:
+```bash
+npm run <script-navn>
+```
+For eksempel `npm run archive-kompetansebevis`. Full liste ligger under `scripts` i `dist/package.json`.
+
+Hver kommando kjører med `--enable-source-maps` (stack traces peker på original kildefil i `scripts/…`; `.map`-filene har embeddet kildekode så repoet trenger ikke være tilstede) og `--env-file=../.env` (leser miljøvariabler fra deploy-rot).
+
+### Verbose modus
+pdfjs-dist skriver ut fire polyfill-advarsler ved oppstart under Node (de er ufarlige — vi hopper bevisst over Canvas). De er filtrert bort som standard. Sett `VERBOSE=true` for å se dem:
+```bash
+VERBOSE=true npm run archive-kompetansebevis
+```
+
+### Logger
+Fillogging via `lib/local-logger.js` skriver til `<deploy-rot>/logs/<script-navn>/YYYY - MM.log` (relativt til bundlens plassering, dvs. `dist/../logs/`).

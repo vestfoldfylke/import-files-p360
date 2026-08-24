@@ -2,33 +2,30 @@
   "name": "import-files-p360",
   "description": "Script som håndterer import av filer til uregistrerte og strekkode import",
   "version": "1.0.0",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib"
+  "engines": {
+    "node": ">=20.18.1"
   },
   "dependencies": {
+    "@azure/msal-node": "^5.5.0",
+    "@biomejs/biome": "^2.5.6",
     "@navikt/fnrvalidator": "^1.3.0",
-    "@vestfoldfylke/msal-token": "^1.0.1",
-    "@vestfoldfylke/pdf-text-extract": "^2.0.1",
-    "@vtfk/logger": "^6.2.2",
-    "axios": "^1.6.7",
-    "csvtojson": "^2.0.10",
-    "dotenv": "^16.3.1",
-    "file-system-cache": "^2.4.4",
+    "@vestfoldfylke/loglady": "^2.1.0",
+    "pdfjs-dist": "^4.10.38",
     "vtfk-schools-info": "^3.4.1"
   },
   "scripts": {
-    "import-strekkode-to-p360": "node ./scripts/import-barcode-to-p360.js",
-    "test": "jest",
-    "test:verbose": "jest --verbose"
+    "build": "node esbuild.config.js",
+    "build:watch": "node esbuild.config.js --watch",
+    "test": "npm run lint && npm run typecheck && node --test \"tests/**/*.test.js\"",
+    "test:verbose": "node --test --test-reporter=spec \"tests/**/*.test.js\"",
+    "typecheck": "tsc -p jsconfig.json",
+    "lint": "npx @biomejs/biome check",
+    "lint:fix": "npx @biomejs/biome check --write"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vestfoldfylke/import-files-p360.git"
   },
-  "keywords": [
-    "nei"
-  ],
   "author": "jorgtho",
   "license": "MIT",
   "bugs": {
@@ -36,13 +33,8 @@
   },
   "homepage": "https://github.com/vestfoldfylke/import-files-p360#readme",
   "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "jest": "^29.7.0",
-    "standard": "^17.1.0"
-  },
-  "standard": {
-    "env": [
-      "jest"
-    ]
+    "@types/node": "^26.2.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
   }
 }

@@ -1,37 +1,71 @@
+// biome-ignore format: preserve leading semicolon
 (async () => {
-  const { getFilesInDirWithMetadata, moveToDir, deleteOldFiles } = require('../lib/file-tools')
-  const { BARCODE } = require('../config')
-  const { sendToUnreg, sendToDocument } = require('../lib/archive')
-  const { logger, logConfig } = require('@vtfk/logger')
-  const { createLocalLogger } = require('../lib/create-local-logger')
-  const { createStat } = require('../lib/stats')
+  require("../lib/local-logger")
+  
+  const { getFilesInDirWithMetadata, moveToDir, deleteOldFiles } = require("../lib/file-tools")
+  const { BARCODE } = require("../config")
+  const { sendToUnreg, sendToDocument } = require("../lib/archive")
+  const { logger } = require("@vestfoldfylke/loglady")
+  const { createStat } = require("../lib/stats")
+  const { formatError } = require("../lib/error-tools")
 
-  // Set up logging
-  logConfig({
-    prefix: 'import-barcode-to-p360',
-    teams: {
-      onlyInProd: false
-    },
-    localLogger: createLocalLogger('import-barcode-to-p360')
-  })
+  logger.logConfig({ prefix: "import-barcode-to-p360" })
 
-  const isNumber = num => { return !isNaN(num) }
+  /**
+   *
+   * @param {string} string
+   * @returns {boolean}
+   */
+  const isNumericalString = (string) => {
+    // Exclude empty strings or strings with only whitespace
+    if (typeof string !== "string" || string.trim() === "") {
+      return false
+    }
 
+    // Convert and check if it is a whole number
+    return Number.isInteger(Number(string))
+  }
+
+  /**
+   *
+   * @param {string} fileName
+   * @returns {import('../lib/types').BarcodeData}
+   * @throws {Error} If the fileName is not in the expected format
+   * @throws {Error} If the docRecno or versionId is not a number
+   * @throws {Error} If the docType is not 'HOVED' or 'VEDLEGG'
+   * @throws {Error} If the docRecno is 0
+   *
+   * The expected format of the fileName is: "{docRecno}_{versionId}_{docType}"
+   * where:
+   * - docRecno: a number representing the document record number
+   * - versionId: a number representing the version ID of the document
+   * - docType: either 'HOVED' or 'VEDLEGG', indicating the type of document
+   */
   const getBarcodeData = (fileName) => {
-    const fileNameList = fileName.split('_')
+    const fileNameList = fileName.split("_")
 
-    if (fileNameList.length < 3) throw new Error('Oh oh, not 3 BARCODEr here')
+    if (fileNameList.length < 3) {
+      throw new Error("Oh oh, not 3 BARCODEr here")
+    }
 
     const docRecno = fileNameList[0]
     const versionId = fileNameList[1]
     const docType = fileNameList[2]
 
-    if (!isNumber(docRecno)) throw new Error('Ohoh, first element is not a number / recno')
-    if (!isNumber(versionId)) throw new Error('Ohoh, second element is not a number / recno')
-    if (!['HOVED', 'VEDLEGG'].includes(docType)) throw new Error('Ohoh, docType is not VEDLEGG or HOVED')
+    if (!isNumericalString(docRecno)) {
+      throw new Error("Ohoh, first element is not a number / recno")
+    }
+    if (!isNumericalString(versionId)) {
+      throw new Error("Ohoh, second element is not a number / recno")
+    }
+    if (!["HOVED", "VEDLEGG"].includes(docType)) {
+      throw new Error("Ohoh, docType is not VEDLEGG or HOVED")
+    }
 
     // Sjekk om docRecno er 0 - da er det no kluss
-    if (Number(docRecno) === 0) throw new Error('Ohoh, recno is 0 - that will not work...')
+    if (Number(docRecno) === 0) {
+      throw new Error("Ohoh, recno is 0 - that will not work...")
+    }
 
     return {
       docRecno,
@@ -40,58 +74,66 @@
     }
   }
 
-  logger('info', [`Checking for files in ${BARCODE.INPUT_DIR}`])
-  const files = getFilesInDirWithMetadata(BARCODE.INPUT_DIR, 'pdf')
-  logger('info', [`${files.length} files ready for handling in ${BARCODE.INPUT_DIR}`])
+  if (!BARCODE.INPUT_DIR) {
+    throw new Error("Oh oh, no BARCODE.INPUT_DIR in config...")
+  }
+
+  logger.info("Checking for files in {InputDir}", BARCODE.INPUT_DIR)
+  const files = getFilesInDirWithMetadata(BARCODE.INPUT_DIR, "pdf")
+  logger.info("{FileCount} files ready for handling in {InputDir}", files.length, BARCODE.INPUT_DIR)
 
   for (const file of files) {
     let barcodeData = null
+
     try {
-      logger('info', [`Getting barcodedata for file ${file.filePath}`])
+      logger.info("Getting barcodedata for file {FilePath}", file.filePath)
       barcodeData = getBarcodeData(file.fileNameWithoutExt)
-      logger('info', [`Got barcodedata for file ${file.filePath}, nice nice`])
+      logger.info("Got barcodedata for file {FilePath}, nice nice", file.filePath)
     } catch (error) {
       // Det er noe galt med dette dok - sender det rett til uregistrerte i stedet bare
-      logger('error', [`Oh no, something is wrong with barcode data - ${error.toString()}, sending to unregistered instead`])
+      logger.errorException(error, "Oh no, something is wrong with barcode data, sending to unregistered instead")
       try {
-        const result = await sendToUnreg({ filename: file.fileNameWithoutExt, note: 'Dokument feilet ved strekkode-lesing', ext: file.fileExt, origin: '2', filepath: file.filePath })
-        logger('info', ['Failed barcode sent to unregistered', result])
+        const result = await sendToUnreg({ filename: file.fileNameWithoutExt, note: "Dokument feilet ved strekkode-lesing", ext: file.fileExt, origin: "2", filepath: file.filePath })
+        logger.info("Failed barcode sent to unregistered - Result: {@Result}", result)
         moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-imported-to-unregistered`)
         continue // Skip to next file
       } catch (innerError) {
-        logger('error', ['Aiuau, failed when sending failed barcode to unregistered, will try again next run', innerError.response?.data || innerError.stack || innerError.toString()])
+        logger.errorException(innerError, "Aiuau, failed when sending failed barcode to unregistered, will try again next run")
         continue // Skip to next file
       }
     }
+
     try {
-      logger('info', [`sending ${file.filePath} to document in P360 with recno: ${barcodeData.docRecno}`])
+      logger.info("Sending {FilePath} to document in P360 with recno: {DocRecno}", file.filePath, barcodeData.docRecno)
       await sendToDocument(barcodeData, file)
       moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-imported`)
-      logger('info', [`Succesfylly added ${file.filePath} to document in P360 with recno: ${barcodeData.docRecno}`])
+      logger.info("Succesfylly added {FilePath} to document in P360 with recno: {DocRecno}", file.filePath, barcodeData.docRecno)
+
       // Opprett statistikk-element i stats db
       try {
-        logger('info', ['Creating statistics element'])
+        logger.info("Creating statistics element")
         const stat = {
-          company: 'Ukjent',
-          description: 'Et dokument scannet inn til P360 med strekkode',
-          type: 'Barcode-ScanTo360',
-          documentTitle: 'Strekkode-scanning'
+          company: "Ukjent",
+          description: "Et dokument scannet inn til P360 med strekkode",
+          type: "Barcode-ScanTo360",
+          documentTitle: "Strekkode-scanning"
         }
         const statRes = await createStat(stat)
-        logger('info', ['Successfully made statistics element', 'Object id', statRes.insertedId])
+        logger.info("Successfully made statistics element - Object id: {InsertedId}", statRes.insertedId)
       } catch (innerError) {
-        logger('warn', ['Failed when creating stat element', innerError.response?.data || innerError.stack || innerError.toString()])
+        logger.warn("Failed when creating stat element: {ErrorMessage}", formatError(innerError))
       }
     } catch (error) {
-      if (error.toString().includes(' does not exist...') || (error.response?.data?.message && error.response?.data?.message.includes('does not exist in Document'))) {
-        logger('error', [`Oh no, document with recno ${barcodeData.docRecno} does not exist... moving to failed`, error.response?.data || error.stack || error.toString()])
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      if (errorMessage.includes(" does not exist...") || errorMessage.includes("does not exist in Document")) {
+        logger.errorException(error, "Oh no, document with recno {DocRecno} does not exist... moving to failed", barcodeData.docRecno)
         moveToDir(file.filePath, `${BARCODE.INPUT_DIR}/barcode-failed`)
         continue
       }
-      logger('error', [`Oh no, something went wrong when sending ${file.filePath} to P360 document with recno: ${barcodeData.docRecno}, will try again next run`, error.response?.data || error.stack || error.toString()])
+      logger.errorException(error, "Oh no, something went wrong when sending {FilePath} to P360 document with recno: {DocRecno}, will try again next run", file.filePath, barcodeData.docRecno)
     }
   }
 
   // Delete imported after days
-  deleteOldFiles(`${BARCODE.INPUT_DIR}/barcode-imported`, 30, 'pdf')
+  deleteOldFiles(`${BARCODE.INPUT_DIR}/barcode-imported`, 30, "pdf")
 })()
