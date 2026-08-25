@@ -39,7 +39,13 @@ const entryPoints = readdirSync(SCRIPTS_DIR)
 
 // Non-JS files that bundled code loads at runtime via __dirname.
 // Copied next to the bundles so `path.join(__dirname, <asset>)` still resolves.
-const RUNTIME_ASSETS = [{ from: "lib/get-ad-user.ps1", to: "get-ad-user.ps1" }]
+// pdf.worker.mjs is pdfjs's "fake worker" — once pdfjs is bundled into the entry
+// script, its relative-to-package worker lookup breaks and it falls back to
+// searching next to the caller, so we place it there.
+const RUNTIME_ASSETS = [
+  { from: "lib/get-ad-user.ps1", to: "get-ad-user.ps1" },
+  { from: "node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs", to: "pdf.worker.mjs" }
+]
 
 const copyRuntimeAssets = () => {
   for (const { from, to } of RUNTIME_ASSETS) {
