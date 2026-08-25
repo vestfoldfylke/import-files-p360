@@ -92,4 +92,6 @@
     process.exit(1)
   }
   logger.info("Alle sjekker passerte")
+
+  await logger.flush()
 })()

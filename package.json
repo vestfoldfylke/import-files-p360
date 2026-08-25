@@ -1,6 +1,6 @@
 {
   "name": "import-files-p360",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Script som håndterer import av filer til uregistrerte og strekkode import",
   "engines": {
     "node": ">=20.18.1"

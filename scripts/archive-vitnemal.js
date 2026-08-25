@@ -148,4 +148,6 @@
   logger.logConfig({ prefix: "archive-vitnemal" })
   // Delete documents that are old enough from imported
   deleteOldFiles(`${VITNEMAL.INPUT_DIR}/imported`, 30, "pdf")
+
+  await logger.flush()
 })()

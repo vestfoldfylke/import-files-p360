@@ -136,4 +136,6 @@
 
   // Delete imported after days
   deleteOldFiles(`${BARCODE.INPUT_DIR}/barcode-imported`, 30, "pdf")
+
+  await logger.flush()
 })()

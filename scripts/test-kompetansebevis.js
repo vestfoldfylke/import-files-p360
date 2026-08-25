@@ -75,4 +75,6 @@
       }
     }
   }
+
+  await logger.flush()
 })()
