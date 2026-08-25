@@ -8,10 +8,21 @@
   const { getKompetansebevis } = require("../lib/document-types/kompetansebevis")
   const { formatError } = require("../lib/error-tools")
   const { writeFileSync } = require("node:fs")
+  const { KOMPETANSEBEVIS } = require("../config")
 
   logger.logConfig({ prefix: "test-kompetansebevis" })
 
-  const kompetansebevisDir = "./tests/local-data/kompetansebevis"
+  if (!KOMPETANSEBEVIS.INPUT_DIR) {
+    throw new Error("KOMPETANSEBEVIS_INPUT_DIR must be set")
+  }
+  if (!KOMPETANSEBEVIS.FALLBACK_ORGANIZATION_NUMBER) {
+    throw new Error("KOMPETANSEBEVIS_FALLBACK_ORGANIZATION_NUMBER must be set")
+  }
+  if (!KOMPETANSEBEVIS.FALLBACK_ACCESS_GROUP) {
+    throw new Error("KOMPETANSEBEVIS_FALLBACK_ACCESS_GROUP must be set")
+  }
+
+  const kompetansebevisDir = KOMPETANSEBEVIS.INPUT_DIR
 
   logger.info("Checking for files in {Dir}", kompetansebevisDir)
   const files = getFilesInDirWithMetadata(kompetansebevisDir, "pdf")

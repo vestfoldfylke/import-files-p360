@@ -8,10 +8,22 @@
   const { getVitnemal } = require("../lib/document-types/vitnemal")
   const { formatError } = require("../lib/error-tools")
   const { writeFileSync } = require("node:fs")
+  const { VITNEMAL } = require("../config")
+  
 
   logger.logConfig({ prefix: "test-vitnemal" })
 
-  const vitnemalDir = "./tests/local-data/vitnemal"
+  if (!VITNEMAL.INPUT_DIR) {
+    throw new Error("VITNEMAL_INPUT_DIR must be set")
+  }
+  if (!VITNEMAL.FALLBACK_ORGANIZATION_NUMBER) {
+    throw new Error("VITNEMAL_FALLBACK_ORGANIZATION_NUMBER must be set")
+  }
+  if (!VITNEMAL.FALLBACK_ACCESS_GROUP) {
+    throw new Error("VITNEMAL_FALLBACK_ACCESS_GROUP must be set")
+  }
+
+  const vitnemalDir = VITNEMAL.INPUT_DIR
 
   logger.info("Checking for files in {Dir}", vitnemalDir)
   const files = getFilesInDirWithMetadata(vitnemalDir, "pdf")
