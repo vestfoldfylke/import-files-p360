@@ -27,4 +27,6 @@
   const envVarValue = process.env.TEST_LOGGING_ENV_VAR_TO_LOG || "No value set in process.env.TEST_LOGGING_ENV_VAR_TO_LOG"
 
   logger.info("Her er verdi fra process.env.TEST_LOGGING_ENV_VAR_TO_LOG: {EnvVarValue}", envVarValue)
+
+  await logger.flush()
 })()
