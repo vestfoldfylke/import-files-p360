@@ -3,7 +3,7 @@ Script som håndterer import av scannede filer til p360
 
 ## OBS!
 > [!WARNING]
-> Når du kjører en release - husk å lagre som "draft" (ikke publiser) for at workflowen skal kjøre!
+> Når du skal release ny kode må du kjøre action manuelt fra main!
 
 Krever minimum Nodejs v.20.18.1
 
