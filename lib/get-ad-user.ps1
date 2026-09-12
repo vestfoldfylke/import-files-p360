@@ -15,6 +15,6 @@ $searchBase = "OU=$UsersOU,OU=USERS,OU=$CountyOU,DC=$Domain,DC=top,DC=no"
 Get-ADUser `
   -SearchBase $searchBase `
   -Filter { EmailAddress -eq $Email } `
-  -Properties DisplayName, Company |
-  Select-Object DisplayName, Company |
+  -Properties DisplayName, Company, Department |
+  Select-Object DisplayName, Company, Department |
   ConvertTo-Json -Depth 20
