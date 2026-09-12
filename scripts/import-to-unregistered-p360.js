@@ -74,7 +74,7 @@
       try {
         adUser = await getUnregAdUser(scannedByEmail)
         if (adUser) {
-          documentData.note = createDocumentNote(`${adUser.Company} - ${adUser.DisplayName}`, file)
+          documentData.note = createDocumentNote(`${adUser.Department || adUser.Company} - ${adUser.DisplayName}`, file)
         }
       } catch (error) {
         logger.warn("Feilet ved henting av {ScannedByEmail} i AD, setter bare scannedByEmail som note: {ErrorMessage}", scannedByEmail, formatError(error))

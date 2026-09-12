@@ -64,7 +64,7 @@
     try {
       const user = await getUnregAdUser(testEmail)
       if (user) {
-        logger.info("OK - fant bruker: DisplayName={DisplayName}, Company={Company}", user.DisplayName, user.Company)
+        logger.info("OK - fant bruker: DisplayName={DisplayName}, Company={Company}, Department={Department}", user.DisplayName, user.Company, user.Department)
       } else {
         logger.warn("Oppslag returnerte null - bruker ble ikke funnet i noen av OU-ene")
       }
